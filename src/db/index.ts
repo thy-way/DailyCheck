@@ -13,8 +13,9 @@ class CheckInDatabase extends Dexie {
       checkIns: '++id, taskId, categoryId, date, timestamp',
       categories: 'id, name, enabled',
       tasks: 'id, categoryId, name, enabled, order',
-    }).upgrade(tx => {
-      return tx.table('tasks').clear() && tx.table('categories').clear();
+    }).upgrade(async (tx) => {
+      await tx.table('tasks').clear();
+      await tx.table('categories').clear();
     });
   }
 }

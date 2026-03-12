@@ -140,33 +140,37 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
-  // ========== 编程学习模块 - 前端 ==========
+  // ========== 编程学习模块 - 学习 ==========
   {
-    id: 'coding-frontend',
+    id: 'coding-learning',
     categoryId: 'coding',
-    name: '前端技术',
-    icon: 'Layout',
+    name: '📚 学习路线',
+    icon: 'BookOpen',
     unit: '分钟',
-    defaultDuration: 60,
+    defaultDuration: 120,
     enabled: true,
     order: 1,
-    description: 'React、Vue、TypeScript、HTML/CSS',
+    group: '学习',
+    groupOrder: 1,
+    description: '系统学习路线，点击查看各语言详细计划',
     learningRoute: [
-      'Week 1-2: TypeScript 进阶',
-      'Week 3-4: React Hooks 源码学习',
-      'Week 5-6: 状态管理 Zustand/Redux',
-      'Week 7-8: 性能优化专题',
-      '持续关注前端新技术趋势'
+      '🟣 Java 后端 - Spring Boot 微服务',
+      '🟢 Go 后端 - 云原生开发',
+      '🔵 Python 全栈 - AI/数据科学',
+      '🔴 C++ 开发 - 底层系统',
+      '🟡 前端/全栈 - React + Node.js',
+      '⚫ 算法刷题 - LeetCode',
+      '📖 技术书籍 - 源码阅读'
     ],
     resources: [
-      { name: 'React 官方文档', url: 'https://react.dev' },
-      { name: 'TypeScript Handbook', url: 'https://www.typescriptlang.org/docs/' },
-      { name: 'MDN Web Docs', url: 'https://developer.mozilla.org' },
-      { name: 'Vue 3 文档', url: 'https://vuejs.org' }
+      { name: 'Java Guide', url: 'https://javaguide.cn' },
+      { name: 'Go 语言圣经', url: 'https://book.go-zh.org/' },
+      { name: 'Python 官方文档', url: 'https://docs.python.org/3/' },
+      { name: '代码随想录', url: 'https://programmercarl.com' }
     ]
   },
 
-  // ========== 编程学习模块 - Java ==========
+  // ========== 编程学习 - Java ==========
   {
     id: 'coding-java',
     categoryId: 'coding',
@@ -175,14 +179,30 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '分钟',
     defaultDuration: 60,
     enabled: true,
-    order: 2,
-    description: 'Java、Spring Boot、微服务',
+    order: 10,
+    group: '学习',
+    groupOrder: 10,
+    description: 'Java、Spring Boot、微服务架构',
     learningRoute: [
       'Week 1-2: Java 核心基础强化',
+      '  • 集合源码：ArrayList/HashMap/LinkedList',
+      '  • 并发编程：Thread/Executor/CompletableFuture',
+      '  • JVM 原理：内存模型、GC、类加载',
+      '',
       'Week 3-4: Spring Boot 入门',
+      '  • IoC/AOP 原理与源码',
+      '  • Spring MVC 请求处理流程',
+      '  • MyBatis Plus 数据库操作',
+      '',
       'Week 5-6: Spring Cloud 微服务',
+      '  • Nacos 服务注册与配置中心',
+      '  • Feign/Ribbon 负载均衡',
+      '  • Sentinel 熔断限流',
+      '',
       'Week 7-8: 项目实战 - 博客系统',
-      'MySQL/Redis 数据库深入'
+      '  • MySQL/Redis 数据库设计',
+      '  • ElasticSearch 全文检索',
+      '  • Docker Compose 部署'
     ],
     resources: [
       { name: 'Spring Boot 官方文档', url: 'https://spring.io/projects/spring-boot' },
@@ -192,7 +212,7 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
-  // ========== 编程学习模块 - Go ==========
+  // ========== 编程学习 - Go ==========
   {
     id: 'coding-go',
     categoryId: 'coding',
@@ -201,14 +221,30 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '分钟',
     defaultDuration: 45,
     enabled: true,
-    order: 3,
-    description: 'Go、Gin、gRPC、云原生',
+    order: 20,
+    group: '学习',
+    groupOrder: 20,
+    description: 'Go、Gin、gRPC、云原生开发',
     learningRoute: [
       'Week 1-2: Go 基础语法',
+      '  • 基础数据类型与结构体',
+      '  • 接口与反射机制',
+      '  • 并发编程：Goroutine/Channel',
+      '',
       'Week 3-4: Gin 框架入门',
+      '  • RESTful API 设计',
+      '  • 中间件与拦截器',
+      '  • GORM 数据库操作',
+      '',
       'Week 5-6: gRPC 与微服务',
+      '  • Protobuf 协议',
+      '  • gRPC 服务编写',
+      '  • 微服务通信与治理',
+      '',
       'Week 7-8: Docker/K8s 基础',
-      '项目：RESTful API 开发'
+      '  • Docker 镜像构建',
+      '  • Kubernetes 部署',
+      '  • CI/CD 流水线'
     ],
     resources: [
       { name: 'Go 官方文档', url: 'https://go.dev/doc' },
@@ -218,33 +254,7 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
-  // ========== 编程学习模块 - C++ ==========
-  {
-    id: 'coding-cpp',
-    categoryId: 'coding',
-    name: 'C++ 开发',
-    icon: 'FileCode',
-    unit: '分钟',
-    defaultDuration: 60,
-    enabled: true,
-    order: 4,
-    description: 'C++、STL、算法竞赛、底层开发',
-    learningRoute: [
-      'Week 1-2: C++ 基础与面向对象',
-      'Week 3-4: STL 容器与算法源码',
-      'Week 5-6: 内存管理、智能指针',
-      'Week 7-8: 并发编程、多线程',
-      '项目：简单编译器/游戏引擎'
-    ],
-    resources: [
-      { name: 'C++ Primer', url: 'https://book.douban.com/subject/25708312' },
-      { name: 'STL 源码剖析', url: 'https://book.douban.com/subject/1112141' },
-      { name: '侯捷 C++ 视频', url: 'https://www.bilibili.com/video/BV1Kb411W7MN' },
-      { name: 'C++ LeetCode', url: 'https://leetcode.cn/tag/cpp/' }
-    ]
-  },
-
-  // ========== 编程学习模块 - Python ==========
+  // ========== 编程学习 - Python ==========
   {
     id: 'coding-python',
     categoryId: 'coding',
@@ -253,14 +263,30 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '分钟',
     defaultDuration: 45,
     enabled: true,
-    order: 5,
-    description: 'Python、数据分析、AI/ML、爬虫',
+    order: 30,
+    group: '学习',
+    groupOrder: 30,
+    description: 'Python、Web开发、数据分析、AI/ML',
     learningRoute: [
       'Week 1-2: Python 基础与语法',
+      '  • 基础语法与数据结构',
+      '  • 装饰器/生成器/迭代器',
+      '  • 面向对象与模块化',
+      '',
       'Week 3-4: Django/Flask Web 开发',
+      '  • Flask 入门：路由/模板/蓝图',
+      '  • Django 进阶：ORM/Admin/中间件',
+      '  • RESTful API：FastAPI/DRF',
+      '',
       'Week 5-6: 数据分析 Pandas/NumPy',
+      '  • 数据清洗与预处理',
+      '  • 数据可视化 Matplotlib/Seaborn',
+      '  • 统计分析与特征工程',
+      '',
       'Week 7-8: 机器学习入门 Scikit-learn',
-      '项目：博客系统/数据分析Dashboard'
+      '  • 监督学习：分类/回归',
+      '  • 无监督学习：聚类/降维',
+      '  • 模型评估与调参'
     ],
     resources: [
       { name: 'Python 官方文档', url: 'https://docs.python.org/3/' },
@@ -270,7 +296,91 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
-  // ========== 编程学习模块 - 算法 ==========
+  // ========== 编程学习 - C++ ==========
+  {
+    id: 'coding-cpp',
+    categoryId: 'coding',
+    name: 'C++ 开发',
+    icon: 'FileCode',
+    unit: '分钟',
+    defaultDuration: 60,
+    enabled: true,
+    order: 40,
+    group: '学习',
+    groupOrder: 40,
+    description: 'C++、STL、算法竞赛、底层开发',
+    learningRoute: [
+      'Week 1-2: C++ 基础与面向对象',
+      '  • 语法基础与内存管理',
+      '  • 类与继承、多态',
+      '  • 模板与泛型编程',
+      '',
+      'Week 3-4: STL 容器与算法源码',
+      '  • vector/list/deque 源码分析',
+      '  • unordered_map/set 哈希表',
+      '  • 算法实现原理',
+      '',
+      'Week 5-6: 内存管理、智能指针',
+      '  • new/delete 底层实现',
+      '  • shared_ptr/unique_ptr/weak_ptr',
+      '  • 内存池与 allocator',
+      '',
+      'Week 7-8: 并发编程、多线程',
+      '  • std::thread 线程管理',
+      '  • mutex/condition_variable',
+      '  • 线程池实现'
+    ],
+    resources: [
+      { name: 'C++ Primer', url: 'https://book.douban.com/subject/25708312' },
+      { name: 'STL 源码剖析', url: 'https://book.douban.com/subject/1112141' },
+      { name: '侯捷 C++ 视频', url: 'https://www.bilibili.com/video/BV1Kb411W7MN' },
+      { name: 'C++ LeetCode', url: 'https://leetcode.cn/tag/cpp/' }
+    ]
+  },
+
+  // ========== 编程学习 - 前端 ==========
+  {
+    id: 'coding-frontend',
+    categoryId: 'coding',
+    name: '前端/全栈',
+    icon: 'Layout',
+    unit: '分钟',
+    defaultDuration: 60,
+    enabled: true,
+    order: 50,
+    group: '学习',
+    groupOrder: 50,
+    description: 'React、Vue、TypeScript、Node.js 全栈',
+    learningRoute: [
+      'Week 1-2: TypeScript 进阶',
+      '  • 类型系统与泛型',
+      '  • 高级类型：交叉/联合/映射',
+      '  • 类型守卫与条件类型',
+      '',
+      'Week 3-4: React 深入',
+      '  • Hooks 源码：useState/useEffect',
+      '  • 虚拟 DOM 与 Diff 算法',
+      '  • 状态管理：Zustand/Redux',
+      '',
+      'Week 5-6: 全栈技能',
+      '  • Node.js/Express/Koa',
+      '  • MongoDB/Redis 数据库',
+      '  • RESTful API 设计',
+      '',
+      'Week 7-8: 性能优化专题',
+      '  • React 渲染优化',
+      '  • 代码分割与懒加载',
+      '  • Webpack/Vite 原理'
+    ],
+    resources: [
+      { name: 'React 官方文档', url: 'https://react.dev' },
+      { name: 'TypeScript Handbook', url: 'https://www.typescriptlang.org/docs/' },
+      { name: 'MDN Web Docs', url: 'https://developer.mozilla.org' },
+      { name: 'Vue 3 文档', url: 'https://vuejs.org' }
+    ]
+  },
+
+  // ========== 编程学习 - 算法 ==========
   {
     id: 'coding-algorithm',
     categoryId: 'coding',
@@ -279,8 +389,10 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '题',
     defaultDuration: 45,
     enabled: true,
-    order: 6,
-    description: 'LeetCode，牛客网算法题',
+    order: 60,
+    group: '学习',
+    groupOrder: 60,
+    description: 'LeetCode、牛客网算法题',
     learningRoute: [
       '第1周：数组、链表、哈希表',
       '第2周：字符串、双指针',
@@ -298,41 +410,219 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
-  // ========== 编程学习模块 - 项目 ==========
+  // ========== 编程学习 - 书籍 ==========
   {
-    id: 'coding-project',
+    id: 'coding-reading',
     categoryId: 'coding',
-    name: '项目实战',
-    icon: 'Folder',
-    unit: '分钟',
-    defaultDuration: 120,
+    name: '技术书籍',
+    icon: 'BookMarked',
+    unit: '页',
+    defaultDuration: 30,
     enabled: true,
-    order: 7,
-    description: '4个完整项目实战，点击查看详情',
+    order: 70,
+    group: '学习',
+    groupOrder: 70,
+    description: '技术经典书籍、源码阅读',
     learningRoute: [
-      '📝 项目1：个人博客系统（全栈） - Next.js + Tailwind',
-      '📦 项目2：电商后台管理系统 - Vue3 + Spring Boot',  
-      '🤖 项目3：AI 聊天应用 - React + OpenAI API',
-      '📊 项目4：数据可视化 Dashboard - ECharts'
+      '《JavaScript高级程序设计》',
+      '《你不知道的JavaScript》',
+      '《深入理解计算机系统》',
+      '《代码整洁之道》',
+      '《架构整洁之道》',
+      '每月 1 本书，精读 + 笔记'
+    ],
+    resources: [
+      { name: 'GitHub 电子书', url: 'https://github.com/EbookFoundation/free-programming-books' },
+      { name: '极客时间', url: 'https://time.geekbang.org' },
+      { name: '掘金小册', url: 'https://juejin.cn/books' }
+    ]
+  },
+
+  // ========== 编程学习模块 - 项目实战 ==========
+  {
+    id: 'coding-projects',
+    categoryId: 'coding',
+    name: '🚀 项目实战',
+    icon: 'Folder',
+    unit: '周',
+    defaultDuration: 28,
+    enabled: true,
+    order: 80,
+    group: '项目实战',
+    groupOrder: 1,
+    description: '完整项目开发，按语言分类，点击查看详情',
+    learningRoute: [
+      '🟣 Java 项目 - 电商后台管理系统',
+      '🟢 Go 项目 - 微服务电商平台',
+      '🔵 Python 项目 - 数据可视化 Dashboard',
+      '🟡 前端项目 - 博客系统 + AI 聊天'
     ],
     resources: [
       { name: 'GitHub Trending', url: 'https://github.com/trending' },
       { name: 'Vercel 部署', url: 'https://vercel.com' },
-      { name: 'Railway 部署', url: 'https://railway.app' },
       { name: 'Docker Docs', url: 'https://docs.docker.com' }
     ]
   },
 
-  // ========== 编程学习模块 - 项目1 ==========
+  // ========== 项目实战 - Java 电商后台 ==========
   {
-    id: 'coding-project1-blog',
+    id: 'coding-project-java',
     categoryId: 'coding',
-    name: '博客系统',
-    icon: 'FileText',
-    unit: '天',
-    defaultDuration: 7,
+    name: 'Java 电商后台',
+    icon: 'ShoppingCart',
+    unit: '周',
+    defaultDuration: 28,
     enabled: true,
-    order: 71,
+    order: 90,
+    group: '项目实战',
+    groupOrder: 10,
+    description: 'Vue3 + Spring Boot 电商后台管理系统',
+    learningRoute: [
+      '📋 Week1：项目初始化',
+      '• 技术选型：Vue3 + Element Plus + Spring Boot',
+      '• 搭建前端项目：Vite + Vue Router + Pinia',
+      '• 搭建后端项目：Spring Boot + MyBatis Plus',
+      '• 设计数据库：用户/商品/订单/库存表结构',
+      '• 搭建开发环境：Docker MySQL + Redis',
+      '',
+      '📦 Week2：核心模块',
+      '• 用户模块：登录注册、权限管理（RBAC）',
+      '• 商品模块：SPU/SKU管理、图片上传OSS',
+      '• 分类模块：树形结构、无限级分类',
+      '• 库存模块：库存预警、进出库记录',
+      '',
+      '🛒 Week3：业务模块',
+      '• 订单模块：下单流程、状态流转、支付集成',
+      '• 统计模块：销售报表、趋势图、导出Excel',
+      '• 通知模块：邮件/短信通知、模板消息',
+      '• 搜索模块：ElasticSearch全文检索',
+      '',
+      '🔒 Week4：安全与部署',
+      '• 接口鉴权：Spring Security + JWT',
+      '• 数据脱敏：敏感信息加密存储',
+      '• 日志审计：记录操作日志',
+      '• 性能优化：数据库索引、懒加载',
+      '• 部署：Docker Compose一键部署'
+    ],
+    resources: [
+      { name: 'Vue 3 文档', url: 'https://vuejs.org' },
+      { name: 'Spring Boot', url: 'https://spring.io/projects/spring-boot' },
+      { name: 'Element Plus', url: 'https://element-plus.org' }
+    ]
+  },
+
+  // ========== 项目实战 - Go 微服务 ==========
+  {
+    id: 'coding-project-go',
+    categoryId: 'coding',
+    name: 'Go 微服务',
+    icon: 'Server',
+    unit: '周',
+    defaultDuration: 28,
+    enabled: true,
+    order: 100,
+    group: '项目实战',
+    groupOrder: 20,
+    description: 'Go + gRPC 微服务电商平台',
+    learningRoute: [
+      '📋 Week1：架构设计',
+      '• 微服务架构理论：康威定律、拆分原则',
+      '• 技术选型：Go + gRPC + Protobuf',
+      '• 服务注册与发现：Nacos/Consul',
+      '• 链路追踪：Jaeger',
+      '',
+      '📦 Week2：用户服务',
+      '• 用户注册/登录/鉴权',
+      '• JWT/OAuth2 认证',
+      '• 分布式 Session',
+      '• 权限控制：RBAC',
+      '',
+      '🛒 Week3：商品服务',
+      '• 商品 CRUD 接口',
+      '• 分类管理：树形结构',
+      '• 库存管理：分布式锁',
+      '• 搜索服务：ES 集成',
+      '',
+      '📦 Week4：订单服务',
+      '• 分布式事务：Seata',
+      '• 订单创建/取消/支付',
+      '• 消息队列：RabbitMQ/Kafka',
+      '• 定时任务：优惠券/库存',
+      '',
+      '🚀 Week5-6：部署运维',
+      '• Docker Compose 编排',
+      '• Kubernetes 部署',
+      '• CI/CD 流水线',
+      '• 监控告警：Prometheus + Grafana'
+    ],
+    resources: [
+      { name: 'Go 官方文档', url: 'https://go.dev/doc' },
+      { name: 'gRPC 文档', url: 'https://grpc.io/docs' },
+      { name: 'Docker', url: 'https://www.docker.com' }
+    ]
+  },
+
+  // ========== 项目实战 - Python 数据可视化 ==========
+  {
+    id: 'coding-project-python',
+    categoryId: 'coding',
+    name: 'Python 数据可视化',
+    icon: 'BarChart',
+    unit: '周',
+    defaultDuration: 28,
+    enabled: true,
+    order: 110,
+    group: '项目实战',
+    groupOrder: 30,
+    description: 'ECharts + Flask 数据可视化 Dashboard',
+    learningRoute: [
+      '📊 Week1：数据采集',
+      '• 明确数据源：数据库/API/爬虫',
+      '• 设计数据仓库：维度表、事实表',
+      '• 搭建ETL流程：数据抽取→清洗→加载',
+      '• 定时任务：使用Cron或Airflow',
+      '• 数据校验：异常值检测与告警',
+      '',
+      '📈 Week2：可视化开发',
+      '• 选择可视化库：ECharts/AntV/G2',
+      '• 核心图表：折线图、柱状图、饼图、地图',
+      '• 仪表盘布局：Grid布局、自适应尺寸',
+      '• 主题配置：暗色模式、数据钻取',
+      '• 交互功能：筛选、排序、导出',
+      '',
+      '🎛️ Week3：交互开发',
+      '• 时间筛选：快捷选项、自定义范围',
+      '• 多维度切换：省市区、年龄段、时间维度',
+      '• 下钻分析：点击图表查看明细',
+      '• 权限控制：不同角色看到不同数据',
+      '• 定时刷新：实时数据看板',
+      '',
+      '☁️ Week4：部署运维',
+      '• 后端服务：Python Flask/FastAPI',
+      '• 数据库：PostgreSQL + TimescaleDB',
+      '• 缓存层：Redis缓存热点数据',
+      '• 部署：Docker + Nginx',
+      '• 监控：Grafana + Prometheus'
+    ],
+    resources: [
+      { name: 'ECharts 示例', url: 'https://echarts.apache.org/examples' },
+      { name: 'Python Flask', url: 'https://flask.palletsprojects.com' },
+      { name: 'Docker Docs', url: 'https://docs.docker.com' }
+    ]
+  },
+
+  // ========== 项目实战 - 前端博客系统 ==========
+  {
+    id: 'coding-project-blog',
+    categoryId: 'coding',
+    name: '前端博客系统',
+    icon: 'FileText',
+    unit: '周',
+    defaultDuration: 21,
+    enabled: true,
+    order: 120,
+    group: '项目实战',
+    groupOrder: 40,
     description: 'Next.js + Tailwind 全栈博客项目',
     learningRoute: [
       '📋 Day1-2：需求分析与设计',
@@ -368,61 +658,18 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
-  // ========== 编程学习模块 - 项目2 ==========
+  // ========== 项目实战 - AI 聊天 ==========
   {
-    id: 'coding-project2-ecommerce',
+    id: 'coding-project-ai',
     categoryId: 'coding',
-    name: '电商后台',
-    icon: 'ShoppingCart',
-    unit: '周',
-    defaultDuration: 28,
-    enabled: true,
-    order: 72,
-    description: 'Vue3 + Spring Boot 电商后台',
-    learningRoute: [
-      '📋 Week1：项目初始化',
-      '• 技术选型：Vue3 + Element Plus + Spring Boot',
-      '• 搭建前端项目：Vite + Vue Router + Pinia',
-      '• 搭建后端项目：Spring Boot + MyBatis Plus',
-      '• 设计数据库：用户/商品/订单/库存表结构',
-      '• 搭建开发环境：Docker MySQL + Redis',
-      '',
-      '📦 Week2：核心模块',
-      '• 用户模块：登录注册、权限管理（RBAC）',
-      '• 商品模块：SPU/SKU管理、图片上传OSS',
-      '• 分类模块：树形结构、无限级分类',
-      '• 库存模块：库存预警、进出库记录',
-      '',
-      '🛒 Week3：业务模块',
-      '• 订单模块：下单流程、状态流转、支付集成',
-      '• 统计模块：销售报表、趋势图、导出Excel',
-      '• 通知模块：邮件/短信通知、模板消息',
-      '• 搜索模块：ElasticSearch全文检索',
-      '',
-      '🔒 Week4：安全与部署',
-      '• 接口鉴权：Spring Security + JWT',
-      '• 数据脱敏：敏感信息加密存储',
-      '• 日志审计：记录操作日志',
-      '• 性能优化：数据库索引、懒加载',
-      '• 部署：Docker Compose一键部署'
-    ],
-    resources: [
-      { name: 'Vue 3 文档', url: 'https://vuejs.org' },
-      { name: 'Spring Boot', url: 'https://spring.io/projects/spring-boot' },
-      { name: 'Element Plus', url: 'https://element-plus.org' }
-    ]
-  },
-
-  // ========== 编程学习模块 - 项目3 ==========
-  {
-    id: 'coding-project3-ai',
-    categoryId: 'coding',
-    name: 'AI 聊天',
+    name: 'AI 聊天应用',
     icon: 'MessageCircle',
     unit: '周',
     defaultDuration: 28,
     enabled: true,
-    order: 73,
+    order: 130,
+    group: '项目实战',
+    groupOrder: 50,
     description: 'React + OpenAI API 聊天应用',
     learningRoute: [
       '🎯 Week1：前端界面',
@@ -459,80 +706,6 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
-  // ========== 编程学习模块 - 项目4 ==========
-  {
-    id: 'coding-project4-dashboard',
-    categoryId: 'coding',
-    name: '数据可视化',
-    icon: 'BarChart',
-    unit: '周',
-    defaultDuration: 28,
-    enabled: true,
-    order: 74,
-    description: 'ECharts 数据可视化 Dashboard',
-    learningRoute: [
-      '📊 Week1：数据采集',
-      '• 明确数据源：数据库/API/爬虫',
-      '• 设计数据仓库：维度表、事实表',
-      '• 搭建ETL流程：数据抽取→清洗→加载',
-      '• 定时任务：使用Cron或Airflow',
-      '• 数据校验：异常值检测与告警',
-      '',
-      '📈 Week2：可视化开发',
-      '• 选择可视化库：ECharts/AntV/G2',
-      '• 核心图表：折线图、柱状图、饼图、地图',
-      '• 仪表盘布局：Grid布局，自适应尺寸',
-      '• 主题配置：暗色模式，数据钻取',
-      '• 交互功能：筛选、排序、导出',
-      '',
-      '🎛️ Week3：交互开发',
-      '• 时间筛选：快捷选项，自定义范围',
-      '• 多维度切换：省市区、年龄段，时间维度',
-      '• 下钻分析：点击图表查看明细',
-      '• 权限控制：不同角色看到不同数据',
-      '• 定时刷新：实时数据看板',
-      '',
-      '☁️ Week4：部署运维',
-      '• 后端服务：Python Flask/FastAPI',
-      '• 数据库：PostgreSQL + TimescaleDB',
-      '• 缓存层：Redis缓存热点数据',
-      '• 部署：Docker + Nginx',
-      '• 监控：Grafana + Prometheus'
-    ],
-    resources: [
-      { name: 'ECharts 示例', url: 'https://echarts.apache.org/examples' },
-      { name: 'Python Flask', url: 'https://flask.palletsprojects.com' },
-      { name: 'Docker Docs', url: 'https://docs.docker.com' }
-    ]
-  },
-
-  // ========== 编程学习模块 - 书籍 ==========
-  {
-    id: 'coding-reading',
-    categoryId: 'coding',
-    name: '技术书籍',
-    icon: 'BookOpen',
-    unit: '页',
-    defaultDuration: 30,
-    enabled: true,
-    order: 8,
-    description: '技术经典书籍、源码阅读',
-    learningRoute: [
-      '《JavaScript高级程序设计》',
-      '《你不知道的JavaScript》',
-      '《深入理解计算机系统》',
-      '《代码整洁之道》',
-      '《架构整洁之道》',
-      '每月 1 本书，精读 + 笔记'
-    ],
-    resources: [
-      { name: 'GitHub 电子书', url: 'https://github.com/EbookFoundation/free-programming-books' },
-      { name: '极客时间', url: 'https://time.geekbang.org' },
-      { name: '掘金小册', url: 'https://juejin.cn/books' }
-    ]
-  },
-
-  // ========== 英语模块 ==========
   {
     id: 'english-vocabulary',
     categoryId: 'english',

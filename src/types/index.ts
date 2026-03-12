@@ -9,6 +9,8 @@ export interface Task {
   defaultDuration?: number;
   enabled: boolean;
   order: number;
+  group?: string;
+  groupOrder?: number;
   description?: string;
   learningRoute?: string[];
   resources?: { name: string; url?: string }[];

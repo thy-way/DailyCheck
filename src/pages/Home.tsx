@@ -409,6 +409,25 @@ const CategorySection: React.FC<CategorySectionProps> = ({
     checkIns.some((ci) => ci.taskId === task.id)
   );
 
+  const groups = enabledTasks.reduce((acc, task) => {
+    const groupName = task.group || '其他';
+    if (!acc[groupName]) {
+      acc[groupName] = [];
+    }
+    acc[groupName].push(task);
+    return acc;
+  }, {} as Record<string, Task[]>);
+
+  const groupOrder = ['学习', '项目实战'];
+  const sortedGroups = Object.keys(groups).sort((a, b) => {
+    const aIdx = groupOrder.indexOf(a);
+    const bIdx = groupOrder.indexOf(b);
+    if (aIdx === -1 && bIdx === -1) return 0;
+    if (aIdx === -1) return 1;
+    if (bIdx === -1) return -1;
+    return aIdx - bIdx;
+  });
+
   return (
     <div className="mb-5 sm:mb-6">
       <button
@@ -447,11 +466,23 @@ const CategorySection: React.FC<CategorySectionProps> = ({
       </button>
 
       {expanded && (
-        <div className="mt-3 sm:mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-          {enabledTasks.map((task) => {
-            const taskCheckIns = checkIns.filter((ci) => ci.taskId === task.id);
-            const isCompleted = taskCheckIns.length > 0;
-            const Icon = iconMap[task.icon] || Dumbbell;
+        <div className="mt-3 sm:mt-4 space-y-4">
+          {sortedGroups.map((groupName) => (
+            <div key={groupName}>
+              <div className="flex items-center mb-2 sm:mb-3">
+                <div className={cn(
+                  'px-3 py-1 rounded-lg text-xs sm:text-sm font-bold',
+                  groupName === '学习' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+                )}>
+                  {groupName}
+                </div>
+                <div className="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent ml-3" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                {groups[groupName].sort((a, b) => (a.groupOrder || a.order) - (b.groupOrder || b.order)).map((task) => {
+                  const taskCheckIns = checkIns.filter((ci) => ci.taskId === task.id);
+                  const isCompleted = taskCheckIns.length > 0;
+                  const Icon = iconMap[task.icon] || Dumbbell;
 
             return (
               <div
@@ -519,7 +550,10 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                 )}
               </div>
             );
-          })}
+                  })}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
