@@ -26,6 +26,14 @@ export const DEFAULT_CATEGORIES: Category[] = [
     enabled: true,
   },
   {
+    id: 'exam',
+    name: '考试备考',
+    icon: 'GraduationCap',
+    color: '#8b5cf6',
+    gradient: 'from-purple-500 to-violet-600',
+    enabled: true,
+  },
+  {
     id: 'side',
     name: '副业',
     icon: 'Briefcase',
@@ -36,7 +44,33 @@ export const DEFAULT_CATEGORIES: Category[] = [
 ];
 
 export const DEFAULT_TASKS: Task[] = [
-  // ========== 健身模块 ==========
+  // ========== 健身模块 - 训练 ==========
+  {
+    id: 'fitness-training',
+    categoryId: 'fitness',
+    name: '🏋️ 训练计划',
+    icon: 'Dumbbell',
+    unit: '分钟',
+    defaultDuration: 60,
+    enabled: true,
+    order: 1,
+    group: '训练',
+    groupOrder: 1,
+    description: '系统训练计划，点击查看详情',
+    learningRoute: [
+      '🟢 周一：胸部 + 三头',
+      '🟡 周二：背部 + 二头',
+      '🔴 周三：腿部',
+      '⚪ 周四：休息/有氧',
+      '🟢 周五：肩部 + 腹肌',
+      '🟡 周六：全身训练',
+      '🔴 周日：休息'
+    ],
+    resources: [
+      { name: 'Jeff Nippard', url: 'https://www.youtube.com/@JeffNippard' },
+      { name: '5x5 训练计划', url: 'https://stronglifts.com/5x5/' }
+    ]
+  },
   {
     id: 'fitness-strength',
     categoryId: 'fitness',
@@ -45,7 +79,9 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '分钟',
     defaultDuration: 60,
     enabled: true,
-    order: 1,
+    order: 10,
+    group: '训练',
+    groupOrder: 10,
     description: '胸、背、腿、肩、手臂等大肌群训练',
     learningRoute: [
       '周一：胸部 - 卧推、哑铃飞鸟、俯卧撑',
@@ -73,7 +109,9 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '分钟',
     defaultDuration: 30,
     enabled: true,
-    order: 2,
+    order: 20,
+    group: '训练',
+    groupOrder: 20,
     description: '跑步、骑行、游泳、跳绳、HIIT',
     learningRoute: [
       '周一：晨间跑步 5KM',
@@ -99,7 +137,9 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '分钟',
     defaultDuration: 20,
     enabled: true,
-    order: 3,
+    order: 30,
+    group: '训练',
+    groupOrder: 30,
     description: '腹肌、腹斜肌、下背部、髋部肌群',
     learningRoute: [
       '平板支撑 3组×60秒',
@@ -123,7 +163,9 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '分钟',
     defaultDuration: 15,
     enabled: true,
-    order: 4,
+    order: 40,
+    group: '训练',
+    groupOrder: 40,
     description: '训练后拉伸、柔韧性练习、瑜伽',
     learningRoute: [
       '训练后静态拉伸 10-15分钟',
@@ -137,6 +179,31 @@ export const DEFAULT_TASKS: Task[] = [
       { name: '全身拉伸演示', url: 'https://www.youtube.com/watch?v=x1iS5qkQ4jI' },
       { name: '瑜伽教程', url: 'https://www.youtube.com/user/yogawithadriene' },
       { name: 'Keep 瑜伽', url: 'https://www.gotokeep.com/exercises/yoga' }
+    ]
+  },
+
+  // ========== 健身模块 - 记录 ==========
+  {
+    id: 'fitness-photo',
+    categoryId: 'fitness',
+    name: '📸 健身打卡',
+    icon: 'Camera',
+    unit: '次',
+    defaultDuration: 1,
+    enabled: true,
+    order: 100,
+    group: '记录',
+    groupOrder: 1,
+    description: '记录健身照片，见证蜕变',
+    learningRoute: [
+      '每周拍摄正面、侧面、背面照片',
+      '每月对比身材变化',
+      '记录体重、体脂率等数据',
+      '保持训练日志，总结进步'
+    ],
+    resources: [
+      { name: 'Progress Pics App', url: 'https://www.progresspics.com' },
+      { name: 'MyFitnessPal', url: 'https://www.myfitnesspal.com' }
     ]
   },
 
@@ -706,16 +773,229 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
+  // ========== 英语模块 - 听力 ==========
+  {
+    id: 'english-listening-learn',
+    categoryId: 'english',
+    name: '🎧 听力学习',
+    icon: 'Headphones',
+    unit: '分钟',
+    defaultDuration: 30,
+    enabled: true,
+    order: 10,
+    group: '听力',
+    groupOrder: 10,
+    description: '听力技巧与方法学习',
+    learningRoute: [
+      '听力题型解析：填空/选择/配对',
+      '定位词技巧：转折词/数字/专有名词',
+      '同义替换总结规律',
+      '精听 vs 泛听方法',
+      '常见口音熟悉：英/美/澳'
+    ],
+    resources: [
+      { name: '雅思哥听力', url: 'https://www.yasige.com' },
+      { name: 'BBC Learning English', url: 'https://www.bbc.co.uk/learningenglish' },
+      { name: 'TED Talks', url: 'https://www.ted.com/talks' }
+    ]
+  },
+  {
+    id: 'english-listening-practice',
+    categoryId: 'english',
+    name: '🎧 听力练习',
+    icon: 'Headphones',
+    unit: '分钟',
+    defaultDuration: 30,
+    enabled: true,
+    order: 11,
+    group: '听力',
+    groupOrder: 11,
+    description: '雅思听力真题/BBC/TED 实际练习',
+    learningRoute: [
+      '周一：雅思听力真题 Section 1-2',
+      '周二：BBC Learning English 精听',
+      '周三：雅思听力 Section 3-4',
+      '周四：TED 演讲泛听',
+      '周五：本周错题复盘',
+      '周六/日：美剧/播客 磨耳朵'
+    ],
+    resources: [
+      { name: '雅思听力真题', url: 'https://www.yasige.com' },
+      { name: 'ESLPod', url: 'https://www.eslpod.com' },
+      { name: '6 Minute English', url: 'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english' }
+    ]
+  },
+
+  // ========== 英语模块 - 口语 ==========
+  {
+    id: 'english-speaking-learn',
+    categoryId: 'english',
+    name: '🗣️ 口语学习',
+    icon: 'Mic',
+    unit: '分钟',
+    defaultDuration: 20,
+    enabled: true,
+    order: 20,
+    group: '口语',
+    groupOrder: 20,
+    description: '口语技巧与素材积累',
+    learningRoute: [
+      'Part 1 答题结构：观点+原因+举例',
+      'Part 2 线索卡准备法',
+      'Part 3 答题思路：观点→解释→举例→总结',
+      '连接词与高级词汇替换',
+      '发音规则：连读/弱读/重音'
+    ],
+    resources: [
+      { name: '雅思口语题库', url: 'https://www.yasi123.com' },
+      { name: 'YouGlish', url: 'https://youglish.com' },
+      { name: 'Rachel\'s English', url: 'https://rachelsenglish.com' }
+    ]
+  },
+  {
+    id: 'english-speaking-practice',
+    categoryId: 'english',
+    name: '🗣️ 口语练习',
+    icon: 'Mic',
+    unit: '分钟',
+    defaultDuration: 20,
+    enabled: true,
+    order: 21,
+    group: '口语',
+    groupOrder: 21,
+    description: '实际口语练习',
+    learningRoute: [
+      'Day 1-2：Part 1 日常话题 10题',
+      'Day 3-4：Part 2 卡片题 2道（2分钟/道）',
+      'Day 5-6：Part 3 讨论题 10题',
+      '每日影子跟读 10分钟',
+      '每周外教/语伴练习 1次'
+    ],
+    resources: [
+      { name: 'Cambly 外教', url: 'https://www.cambly.com' },
+      { name: '口语侠', url: 'https://www.kouyuxia.com' },
+      { name: '雅思哥口语', url: 'https://www.yasige.com' }
+    ]
+  },
+
+  // ========== 英语模块 - 阅读 ==========
+  {
+    id: 'english-reading-learn',
+    categoryId: 'english',
+    name: '📖 阅读学习',
+    icon: 'BookOpen',
+    unit: '分钟',
+    defaultDuration: 20,
+    enabled: true,
+    order: 30,
+    group: '阅读',
+    groupOrder: 30,
+    description: '阅读技巧与方法论',
+    learningRoute: [
+      '阅读顺序：标题→题目→文章',
+      '定位词技巧与同义替换',
+      '判断题解题技巧：True/False/Not Given',
+      'heading 题配对技巧',
+      '长难句分析方法'
+    ],
+    resources: [
+      { name: '雅思阅读技巧', url: 'https://www.yasige.com' },
+      { name: '扇贝阅读', url: 'https://www.shanbay.com/read' },
+      { name: 'Cambridge Dictionary', url: 'https://dictionary.cambridge.org' }
+    ]
+  },
+  {
+    id: 'english-reading-practice',
+    categoryId: 'english',
+    name: '📖 阅读练习',
+    icon: 'BookOpen',
+    unit: '篇',
+    defaultDuration: 20,
+    enabled: true,
+    order: 31,
+    group: '阅读',
+    groupOrder: 31,
+    description: '实际阅读练习',
+    learningRoute: [
+      '每日 1 篇雅思阅读真题（18分钟内）',
+      '精读：生词/同义替换/长难句',
+      '周六：The Economist / 卫报',
+      '周日：本周阅读词汇整理',
+      '阅读速度提升训练'
+    ],
+    resources: [
+      { name: 'The Economist', url: 'https://www.economist.com' },
+      { name: 'BBC News', url: 'https://www.bbc.com/news' },
+      { name: 'National Geographic', url: 'https://www.nationalgeographic.com' }
+    ]
+  },
+
+  // ========== 英语模块 - 写作 ==========
+  {
+    id: 'english-writing-learn',
+    categoryId: 'english',
+    name: '✍️ 写作学习',
+    icon: 'PenTool',
+    unit: '分钟',
+    defaultDuration: 20,
+    enabled: true,
+    order: 40,
+    group: '写作',
+    groupOrder: 40,
+    description: '写作技巧与素材',
+    learningRoute: [
+      '小作文：图表描述结构与句型',
+      '大作文：四大题型解题思路',
+      'Task Response 评分标准',
+      'Coherence & Cohesion 连接技巧',
+      '词汇多样性：同义替换/词伙积累'
+    ],
+    resources: [
+      { name: 'Simon 雅思', url: 'https://ielts-simon.com' },
+      { name: '雅思写作真经', url: 'https://book.douban.com/subject/27169130' },
+      { name: 'Grammarly', url: 'https://www.grammarly.com' }
+    ]
+  },
+  {
+    id: 'english-writing-practice',
+    categoryId: 'english',
+    name: '✍️ 写作练习',
+    icon: 'PenTool',
+    unit: '篇',
+    defaultDuration: 30,
+    enabled: true,
+    order: 41,
+    group: '写作',
+    groupOrder: 41,
+    description: '实际写作练习',
+    learningRoute: [
+      '周一：小作文（图表描述）1篇',
+      '周三：大作文（议论文）1篇',
+      '周五：Task Response 专项练习',
+      '周六：万能论点整理/语料积累',
+      '周日：作文批改与复盘',
+      '目标：每周 2 篇完整作文'
+    ],
+    resources: [
+      { name: 'IELTS Buddy', url: 'https://www.ieltsbuddy.com' },
+      { name: 'Write & Improve', url: 'https://writeandimprove.com' },
+      { name: 'Lang-8', url: 'https://lang-8.com' }
+    ]
+  },
+
+  // ========== 英语模块 - 词汇 ==========
   {
     id: 'english-vocabulary',
     categoryId: 'english',
-    name: '背单词',
+    name: '📚 词汇积累',
     icon: 'BookMarked',
     unit: '个',
     defaultDuration: 20,
     enabled: true,
-    order: 1,
-    description: '每日词汇积累，雅思/托福核心词',
+    order: 50,
+    group: '词汇',
+    groupOrder: 50,
+    description: '每日词汇积累',
     learningRoute: [
       '每日新词 20-30个',
       '复习旧词 50-100个（艾宾浩斯曲线）',
@@ -729,103 +1009,212 @@ export const DEFAULT_TASKS: Task[] = [
       { name: '雅思词汇真经', url: 'https://book.douban.com/subject/35112225' }
     ]
   },
+
+  // ========== 考试模块 - PMP ==========
   {
-    id: 'english-listening',
-    categoryId: 'english',
-    name: '听力练习',
-    icon: 'Headphones',
+    id: 'exam-pmp',
+    categoryId: 'exam',
+    name: 'PMP 备考',
+    icon: 'BookOpen',
     unit: '分钟',
+    defaultDuration: 60,
+    enabled: true,
+    order: 10,
+    group: 'PMP',
+    groupOrder: 10,
+    description: 'PMP 项目管理专业人士认证',
+    learningRoute: [
+      'Week 1-2：五大过程组学习',
+      '• 启动过程组：项目章程、识别干系人',
+      '• 规划过程组：所有子计划制定',
+      '• 执行过程组：项目工作执行',
+      '• 监控过程组：项目监控与控制',
+      '• 收尾过程组：项目验收与总结',
+      '',
+      'Week 3-4：十大知识领域',
+      '• 范围管理：WBS、需求收集',
+      '• 进度管理：关键路径、CPM',
+      '• 成本管理：估算、预算、挣值管理',
+      '• 质量管理：QA/QC、七种工具',
+      '• 资源、沟通、风险、采购、干系人管理'
+    ],
+    resources: [
+      { name: 'PMI 官方', url: 'https://www.pmi.org' },
+      { name: 'PMBOK 指南', url: 'https://www.pmi.org/pmbok' },
+      { name: 'PMP 题库', url: 'https://www.pmi.org' }
+    ]
+  },
+  {
+    id: 'exam-pmp-practice',
+    categoryId: 'exam',
+    name: 'PMP 练题',
+    icon: 'CheckCircle',
+    unit: '题',
     defaultDuration: 30,
     enabled: true,
-    order: 2,
-    description: '雅思听力、BBC、TED、播客',
+    order: 11,
+    group: 'PMP',
+    groupOrder: 11,
+    description: 'PMP 考试真题练习',
     learningRoute: [
-      '周一、三：雅思听力真题练习',
-      '周二、四：BBC Learning English',
-      '周五：TED演讲精听',
-      '周六：美剧片段听写',
-      '周日：本周听力材料复盘'
+      '每日 20 题，涵盖五大过程组',
+      'Week 1-2：场景题专项练习',
+      'Week 3-4：计算题专项（EVM/CPM）',
+      'Week 5-6：冲刺阶段，做模拟题',
+      'Week 7-8：错题复盘，查漏补缺',
+      '目标：通过模拟考试'
     ],
     resources: [
-      { name: '雅思哥', url: 'https://www.yasige.com' },
-      { name: 'BBC Learning English', url: 'https://www.bbc.co.uk/learningenglish' },
-      { name: 'TED Talks', url: 'https://www.ted.com/talks' },
-      { name: 'ESLPod', url: 'https://www.eslpod.com' }
-    ]
-  },
-  {
-    id: 'english-speaking',
-    categoryId: 'english',
-    name: '口语练习',
-    icon: 'Mic',
-    unit: '分钟',
-    defaultDuration: 20,
-    enabled: true,
-    order: 3,
-    description: '雅思口语、影子跟读、对话练习',
-    learningRoute: [
-      'Day 1-2：Part 1 日常话题',
-      'Day 3-4：Part 2 卡片题（1-2分钟）',
-      'Day 5-6：Part 3 讨论题',
-      '每日影子跟读 10分钟',
-      '语言伙伴练习 30分钟/周'
-    ],
-    resources: [
-      { name: 'Cambly 外教', url: 'https://www.cambly.com' },
-      { name: '口语侠', url: 'https://www.kouyuxia.com' },
-      { name: 'YouGlish', url: 'https://youglish.com' },
-      { name: '雅思口语题库', url: 'https://www.yasi123.com' }
-    ]
-  },
-  {
-    id: 'english-reading',
-    categoryId: 'english',
-    name: '阅读理解',
-    icon: 'Newspaper',
-    unit: '篇',
-    defaultDuration: 20,
-    enabled: true,
-    order: 4,
-    description: '雅思阅读、英文外刊、新闻',
-    learningRoute: [
-      '每日 1 篇雅思阅读真题',
-      '精读：定位词、同义词替换',
-      '周六：The Economist / 卫报',
-      '周日：本周阅读词汇整理',
-      '阅读速度目标：18分钟/篇'
-    ],
-    resources: [
-      { name: 'The Economist', url: 'https://www.economist.com' },
-      { name: 'BBC News', url: 'https://www.bbc.com/news' },
-      { name: '扇贝阅读', url: 'https://www.shanbay.com/read' }
-    ]
-  },
-  {
-    id: 'english-writing',
-    categoryId: 'english',
-    name: '写作练习',
-    icon: 'PenTool',
-    unit: '篇',
-    defaultDuration: 20,
-    enabled: true,
-    order: 5,
-    description: '雅思写作、大作文、小作文',
-    learningRoute: [
-      '周一：小作文（图表描述）',
-      '周三：大作文（议论文）',
-      '周五：Task Response 练习',
-      '周六：万能论点整理',
-      '周日：作文批改与复盘',
-      '目标：每周 2 篇完整作文'
-    ],
-    resources: [
-      { name: 'Simon 雅思', url: 'https://ielts-simon.com' },
-      { name: 'Grammarly', url: 'https://www.grammarly.com' },
-      { name: '雅思写作真经', url: 'https://book.douban.com/subject/27169130' }
+      { name: 'PMP 模拟题', url: 'https://www.pmi.org' },
+      { name: 'PMP 计算题练习', url: 'https://www.pmi.org' }
     ]
   },
 
-  // ========== 副业模块 ==========
+  // ========== 考试模块 - CSIP ==========
+  {
+    id: 'exam-csip',
+    categoryId: 'exam',
+    name: 'CSIP 备考',
+    icon: 'Award',
+    unit: '分钟',
+    defaultDuration: 60,
+    enabled: true,
+    order: 20,
+    group: 'CSIP',
+    groupOrder: 20,
+    description: 'CSIP 系统集成项目管理工程师',
+    learningRoute: [
+      'Week 1-2：信息化基础',
+      '• 信息系统建设与系统集成',
+      '• 信息系统服务管理',
+      '• 信息化战略与规划',
+      '',
+      'Week 3-4：项目管理基础',
+      '• 项目管理知识体系',
+      '• 项目立项、实施、验收流程',
+      '• 项目监理方法',
+      '',
+      'Week 5-6：技术知识',
+      '• 软件工程、网络技术',
+      '• 信息安全、数据治理',
+      '• 新技术应用（云计算、大数据、AI）'
+    ],
+    resources: [
+      { name: 'CSIP 官方', url: 'http://www.csi-se.com.cn' },
+      { name: 'CSIP 教程', url: 'http://www.csi-se.com.cn' }
+    ]
+  },
+  {
+    id: 'exam-csip-practice',
+    categoryId: 'exam',
+    name: 'CSIP 练题',
+    icon: 'CheckSquare',
+    unit: '题',
+    defaultDuration: 30,
+    enabled: true,
+    order: 21,
+    group: 'CSIP',
+    groupOrder: 21,
+    description: 'CSIP 考试真题练习',
+    learningRoute: [
+      '每日 20 题，上午案例题',
+      '每日 20 题，下午选择填空题',
+      'Week 1-2：综合知识专项',
+      'Week 3-4：案例分析专项',
+      'Week 5-6：历年真题模拟',
+      'Week 7-8：错题复习与总结'
+    ],
+    resources: [
+      { name: 'CSIP 真题', url: 'http://www.csi-se.com.cn' },
+      { name: 'CSIP 题库', url: 'http://www.csi-se.com.cn' }
+    ]
+  },
+
+  // ========== 考试模块 - IELTS ==========
+  {
+    id: 'exam-ielts-learn',
+    categoryId: 'exam',
+    name: 'IELTS 学习',
+    icon: 'Languages',
+    unit: '分钟',
+    defaultDuration: 45,
+    enabled: true,
+    order: 30,
+    group: 'IELTS',
+    groupOrder: 30,
+    description: '雅思学习技巧与方法',
+    learningRoute: [
+      '听力：题型分析与解题技巧',
+      '• Section 1-4 各题型特点',
+      '• 定位词与同义替换',
+      '• 雅思听力 7.5+ 技巧',
+      '',
+      '阅读：三篇文章应试策略',
+      '• 判断题、配对题、填空题',
+      '• 长难句分析与时间分配',
+      '• 雅思阅读 7.5+ 技巧',
+      '',
+      '写作：大小作文高分模板',
+      '• 小作文图表描述结构',
+      '• 大作文四大题型思路',
+      '• 高级词汇与句型积累'
+    ],
+    resources: [
+      { name: 'IELTS 官方', url: 'https://www.ielts.org' },
+      { name: '剑桥雅思真题', url: 'https://www.cambridgeenglish.org' },
+      { name: '雅思哥', url: 'https://www.yasige.com' }
+    ]
+  },
+  {
+    id: 'exam-ielts-practice',
+    categoryId: 'exam',
+    name: 'IELTS 练习',
+    icon: 'CheckCircle',
+    unit: '题',
+    defaultDuration: 45,
+    enabled: true,
+    order: 31,
+    group: 'IELTS',
+    groupOrder: 31,
+    description: '雅思真题实际练习',
+    learningRoute: [
+      '听力：每日 2 套剑桥听力',
+      '阅读：每日 3 篇文章（54分钟）',
+      '写作：每日 1 篇小作文 + 1 篇大作文',
+      '口语：每日 Part 1-3 各准备 1 题',
+      '每周：1 套完整模拟考试',
+      '目标：总分 7.5+'
+    ],
+    resources: [
+      { name: '剑桥雅思真题', url: 'https://www.cambridgeenglish.org' },
+      { name: '雅思听力练习', url: 'https://www.yasige.com' }
+    ]
+  },
+
+  // ========== 副业模块 - 行动 ==========
+  {
+    id: 'side-action',
+    categoryId: 'side',
+    name: '💰 变现行动',
+    icon: 'Briefcase',
+    unit: '分钟',
+    defaultDuration: 60,
+    enabled: true,
+    order: 1,
+    group: '行动',
+    groupOrder: 1,
+    description: '自媒体、产品、接单，点击查看详情',
+    learningRoute: [
+      '📝 自媒体 - 短视频/公众号/博客',
+      '🛠️ 产品 - SaaS/插件/模板',
+      '💼 接单 - 外包/咨询/项目',
+      '📊 复盘 - 数据分析/优化'
+    ],
+    resources: [
+      { name: 'Indie Hackers', url: 'https://www.indiehackers.com' },
+      { name: 'Product Hunt', url: 'https://www.producthunt.com' }
+    ]
+  },
   {
     id: 'side-content',
     categoryId: 'side',
@@ -834,7 +1223,9 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '分钟',
     defaultDuration: 60,
     enabled: true,
-    order: 1,
+    order: 10,
+    group: '行动',
+    groupOrder: 10,
     description: '短视频、公众号、博客内容产出',
     learningRoute: [
       '定位：技术/职场/学习分享',
@@ -859,7 +1250,9 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '分钟',
     defaultDuration: 60,
     enabled: true,
-    order: 2,
+    order: 20,
+    group: '行动',
+    groupOrder: 20,
     description: 'SaaS工具、Chrome插件、付费模板',
     learningRoute: [
       '需求调研：目标用户痛点',
@@ -884,7 +1277,9 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '单',
     defaultDuration: 30,
     enabled: true,
-    order: 3,
+    order: 30,
+    group: '行动',
+    groupOrder: 30,
     description: '自由职业、外包项目、技术咨询',
     learningRoute: [
       '技能包：前端开发/技术咨询',
@@ -909,7 +1304,9 @@ export const DEFAULT_TASKS: Task[] = [
     unit: '分钟',
     defaultDuration: 30,
     enabled: true,
-    order: 4,
+    order: 40,
+    group: '学习',
+    groupOrder: 10,
     description: '短视频制作、运营、变现知识',
     learningRoute: [
       'Week 1-2：短视频剪辑技能',

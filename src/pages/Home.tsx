@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import {
@@ -27,6 +27,8 @@ import {
   ChevronUp,
   Flame,
   Check,
+  CheckCircle,
+  CheckSquare,
   X,
   ExternalLink,
   Calendar,
@@ -45,6 +47,14 @@ import {
   ShoppingCart,
   MessageCircle,
   BarChart,
+  Camera,
+  Sparkles as SparklesIcon,
+  Trophy,
+  Rocket,
+  Brain,
+  Smile,
+  Award,
+  Languages,
 } from 'lucide-react';
 import { useCheckInStore } from '@/store';
 import { Category, Task, CheckIn } from '@/types';
@@ -80,6 +90,12 @@ const iconMap: Record<string, React.ElementType> = {
   ShoppingCart,
   MessageCircle,
   BarChart,
+  Camera,
+  Trophy,
+  CheckCircle,
+  CheckSquare,
+  Award,
+  Languages,
 };
 
 interface TaskDetailDialogProps {
@@ -242,8 +258,41 @@ interface TaskCheckInDialogProps {
   open: boolean;
   onClose: () => void;
   task: Task | null;
-  onConfirm: (duration?: number, quantity?: number, note?: string) => void;
+  onConfirm: (duration?: number, quantity?: number, note?: string, photo?: string) => void;
 }
+
+const ENCOURAGING_MESSAGES = [
+  // 中文励志
+  { icon: Trophy, text: '🎉 太棒了！又完成一项！', color: 'text-yellow-400' },
+  { icon: Rocket, text: '🚀 向着目标前进！', color: 'text-orange-400' },
+  { icon: Brain, text: '💪 学习让你更强大！', color: 'text-purple-400' },
+  { icon: Smile, text: '😊 今天的你比昨天更优秀！', color: 'text-green-400' },
+  { icon: Star, text: '⭐ 坚持就是胜利！', color: 'text-blue-400' },
+  { icon: SparklesIcon, text: '✨ 继续保持！', color: 'text-pink-400' },
+  { icon: Flame, text: '🔥 燃烧你的小宇宙！', color: 'text-red-400' },
+  { icon: Target, text: '🎯 每一步都算数！', color: 'text-indigo-400' },
+  { icon: Heart, text: '❤️ 热爱可抵岁月漫长！', color: 'text-rose-400' },
+  { icon: Zap, text: '⚡ 优秀是一种习惯！', color: 'text-amber-400' },
+  
+  // 古诗词
+  { icon: BookOpen, text: '📜 锲而不舍，金石可镂', color: 'text-emerald-300' },
+  { icon: BookOpen, text: '📜 不积跬步，无以至千里', color: 'text-cyan-300' },
+  { icon: BookOpen, text: '📜 天道酬勤，厚德载物', color: 'text-teal-300' },
+  { icon: BookOpen, text: '📜 长风破浪会有时，直挂云帆济沧海', color: 'text-slate-300' },
+  { icon: BookOpen, text: '📜 千淘万漉虽辛苦，吹尽狂沙始到金', color: 'text-amber-300' },
+  { icon: BookOpen, text: '📜 纸上得来终觉浅，绝知此事要躬行', color: 'text-stone-300' },
+  { icon: BookOpen, text: '📜 学而不思则罔，思而不学则殆', color: 'text-neutral-300' },
+  
+  // 英语励志
+  { icon: Globe, text: '🌍 Stay hungry, stay foolish', color: 'text-blue-300' },
+  { icon: Globe, text: '🌍 The journey of a thousand miles begins with a single step', color: 'text-indigo-300' },
+  { icon: Globe, text: '🌍 Practice makes perfect', color: 'text-violet-300' },
+  { icon: Globe, text: '🌍 Where there is a will, there is a way', color: 'text-purple-300' },
+  { icon: Globe, text: '🌍 No pain, no gain', color: 'text-fuchsia-300' },
+  { icon: Globe, text: '🌍 Rome wasn\'t built in a day', color: 'text-rose-300' },
+  { icon: Globe, text: '🌍 Actions speak louder than words', color: 'text-cyan-300' },
+  { icon: Globe, text: '🌍 Believe in yourself', color: 'text-sky-300' },
+];
 
 const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
   open,
@@ -254,61 +303,106 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
   const [duration, setDuration] = useState(task?.defaultDuration || 30);
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [showPhotoInput, setShowPhotoInput] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [encouragingMsg, setEncouragingMsg] = useState(ENCOURAGING_MESSAGES[0]);
   const [mode, setMode] = useState<'duration' | 'quantity'>(
     task?.unit === '分钟' ? 'duration' : 'quantity'
   );
+
+  useEffect(() => {
+    if (open && task) {
+      setEncouragingMsg(ENCOURAGING_MESSAGES[Math.floor(Math.random() * ENCOURAGING_MESSAGES.length)]);
+    }
+  }, [open, task]);
+
+  useEffect(() => {
+    if (task) {
+      setMode(task.unit === '分钟' ? 'duration' : 'quantity');
+    }
+  }, [task]);
 
   if (!open || !task) return null;
 
   const handleConfirm = () => {
     if (mode === 'duration') {
-      onConfirm(duration, undefined, note || undefined);
+      onConfirm(duration, undefined, note || undefined, photo || undefined);
     } else {
-      onConfirm(undefined, quantity, note || undefined);
+      onConfirm(undefined, quantity, note || undefined, photo || undefined);
     }
-    setNote('');
-    onClose();
+    setShowSuccess(true);
+    setTimeout(() => {
+      setNote('');
+      setPhoto('');
+      setShowPhotoInput(false);
+      setShowSuccess(false);
+      onClose();
+    }, 1500);
+  };
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhoto(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">{task.name}</h3>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        {showSuccess ? (
+          <div className="p-8 flex flex-col items-center justify-center">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <Check className="w-10 h-10 text-green-500" />
+            </div>
+            <p className={`flex items-center text-lg font-bold ${encouragingMsg.color} mb-2`}>
+              {React.createElement(encouragingMsg.icon, { className: "w-6 h-6 mr-2" })}
+              {encouragingMsg.text}
+            </p>
+            <p className="text-gray-500 text-sm">记录已保存</p>
           </div>
+        ) : (
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900">{task.name}</h3>
+              <button
+                onClick={onClose}
+                className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-          <div className="flex mb-6 bg-gray-100 rounded-xl p-1">
-            <button
-              onClick={() => setMode('duration')}
-              className={cn(
-                'flex-1 py-2 rounded-lg text-sm font-medium transition-all',
-                mode === 'duration'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-500'
-              )}
-            >
-              按时长
-            </button>
-            <button
-              onClick={() => setMode('quantity')}
-              className={cn(
-                'flex-1 py-2 rounded-lg text-sm font-medium transition-all',
-                mode === 'quantity'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-500'
-              )}
-            >
-              按数量
-            </button>
-          </div>
+            <div className="flex mb-6 bg-gray-100 rounded-xl p-1">
+              <button
+                onClick={() => setMode('duration')}
+                className={cn(
+                  'flex-1 py-2 rounded-lg text-sm font-medium transition-all',
+                  mode === 'duration'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-500'
+                )}
+              >
+                按时长
+              </button>
+              <button
+                onClick={() => setMode('quantity')}
+                className={cn(
+                  'flex-1 py-2 rounded-lg text-sm font-medium transition-all',
+                  mode === 'quantity'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-500'
+                )}
+              >
+                按数量
+              </button>
+            </div>
 
           {mode === 'duration' ? (
             <div className="mb-6">
@@ -372,13 +466,47 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
             />
           </div>
 
+          <div className="mb-4">
+            <button
+              type="button"
+              onClick={() => setShowPhotoInput(!showPhotoInput)}
+              className="flex items-center text-sm text-gray-500 hover:text-gray-700"
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              {photo ? '更换照片' : '添加照片（可选）'}
+            </button>
+            
+            {showPhotoInput && (
+              <div className="mt-3">
+                {photo ? (
+                  <div className="relative">
+                    <img src={photo} alt="打卡照片" className="w-full h-40 object-cover rounded-xl" />
+                    <button
+                      onClick={() => setPhoto('')}
+                      className="absolute top-2 right-2 p-1 bg-black/50 rounded-full text-white"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors">
+                    <Camera className="w-8 h-8 text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-500">点击上传照片</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
+                  </label>
+                )}
+              </div>
+            )}
+          </div>
+
           <button
             onClick={handleConfirm}
             className="w-full py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold text-lg hover:opacity-90 transition-opacity"
           >
             确认打卡
           </button>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -418,7 +546,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
     return acc;
   }, {} as Record<string, Task[]>);
 
-  const groupOrder = ['学习', '项目实战'];
+  const groupOrder = ['学习', '项目实战', '训练', '记录', '听力', '口语', '阅读', '写作', '词汇', 'PMP', 'CSIP', 'IELTS', '行动'];
   const sortedGroups = Object.keys(groups).sort((a, b) => {
     const aIdx = groupOrder.indexOf(a);
     const bIdx = groupOrder.indexOf(b);
@@ -427,6 +555,8 @@ const CategorySection: React.FC<CategorySectionProps> = ({
     if (bIdx === -1) return -1;
     return aIdx - bIdx;
   });
+
+  const [activeGroup, setActiveGroup] = useState<string>(sortedGroups[0] || '');
 
   return (
     <div className="mb-5 sm:mb-6">
@@ -465,24 +595,111 @@ const CategorySection: React.FC<CategorySectionProps> = ({
         </div>
       </button>
 
-      {expanded && (
-        <div className="mt-3 sm:mt-4 space-y-4">
-          {sortedGroups.map((groupName) => (
-            <div key={groupName}>
-              <div className="flex items-center mb-2 sm:mb-3">
-                <div className={cn(
-                  'px-3 py-1 rounded-lg text-xs sm:text-sm font-bold',
-                  groupName === '学习' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
-                )}>
-                  {groupName}
+      {expanded && sortedGroups.length > 0 && (
+        <div className="mt-3 sm:mt-4">
+          <div className="flex space-x-2 mb-4">
+            {sortedGroups.map((groupName) => (
+              <button
+                key={groupName}
+                onClick={() => setActiveGroup(groupName)}
+                className={cn(
+                  'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all flex items-center justify-center space-x-2',
+                  activeGroup === groupName
+                    ? (groupName === '学习' 
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md' 
+                        : 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-md')
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                )}
+              >
+                <span>{groupName === '学习' ? '📚' : '🚀'}</span>
+                <span>{groupName}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {(groups[activeGroup] || []).sort((a, b) => (a.groupOrder || a.order) - (b.groupOrder || b.order)).map((task) => {
+              const taskCheckIns = checkIns.filter((ci) => ci.taskId === task.id);
+              const isCompleted = taskCheckIns.length > 0;
+              const Icon = iconMap[task.icon] || Dumbbell;
+
+              return (
+                <div
+                  key={task.id}
+                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
+                      <div
+                        className={cn(
+                          'w-10 sm:w-12 h-10 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0',
+                          isCompleted ? styles.bg : 'bg-gray-100'
+                        )}
+                      >
+                        <Icon className={cn('w-5 sm:w-6 h-5 sm:h-6', isCompleted ? 'text-white' : styles.text)} />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{task.name}</h4>
+                        <p className="text-xs text-gray-500 truncate">
+                          {task.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => onShowDetail(task)}
+                      className="text-xs text-blue-500 hover:text-blue-600 flex items-center"
+                    >
+                      <Calendar className="w-3 h-3 mr-1" />
+                      详情
+                    </button>
+                    <button
+                      onClick={() => onCheckIn(task)}
+                      className={cn(
+                        'px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all',
+                        isCompleted
+                          ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          : cn(styles.bg, 'text-white hover:opacity-90')
+                      )}
+                    >
+                      {isCompleted ? '再打卡' : '打卡'}
+                    </button>
+                  </div>
+                  
+                  {taskCheckIns.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-50">
+                      <div className="flex flex-wrap gap-1">
+                        {taskCheckIns.map((ci, idx) => (
+                          <span
+                            key={idx}
+                            className={cn(
+                              'px-2 py-0.5 rounded-full text-xs',
+                              styles.bgLight,
+                              styles.text
+                            )}
+                          >
+                            {ci.duration && `${ci.duration}分钟`}
+                            {ci.quantity && `${ci.quantity}${task.unit}`}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent ml-3" />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                {groups[groupName].sort((a, b) => (a.groupOrder || a.order) - (b.groupOrder || b.order)).map((task) => {
-                  const taskCheckIns = checkIns.filter((ci) => ci.taskId === task.id);
-                  const isCompleted = taskCheckIns.length > 0;
-                  const Icon = iconMap[task.icon] || Dumbbell;
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {expanded && sortedGroups.length === 0 && (
+        <div className="mt-3 sm:mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          {enabledTasks.map((task) => {
+            const taskCheckIns = checkIns.filter((ci) => ci.taskId === task.id);
+            const isCompleted = taskCheckIns.length > 0;
+            const Icon = iconMap[task.icon] || Dumbbell;
 
             return (
               <div
@@ -514,7 +731,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                     className="text-xs text-blue-500 hover:text-blue-600 flex items-center"
                   >
                     <Calendar className="w-3 h-3 mr-1" />
-                    学习计划
+                    详情
                   </button>
                   <button
                     onClick={() => onCheckIn(task)}
@@ -550,10 +767,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                 )}
               </div>
             );
-                  })}
-              </div>
-            </div>
-          ))}
+          })}
         </div>
       )}
     </div>
@@ -566,6 +780,14 @@ export const Home: React.FC = () => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [detailTask, setDetailTask] = useState<Task | null>(null);
+  const [dailyQuote, setDailyQuote] = useState(ENCOURAGING_MESSAGES[Math.floor(Math.random() * ENCOURAGING_MESSAGES.length)]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDailyQuote(ENCOURAGING_MESSAGES[Math.floor(Math.random() * ENCOURAGING_MESSAGES.length)]);
+    }, 10000); // 每10秒切换一次
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCheckIn = (task: Task) => {
     setSelectedTask(task);
@@ -576,9 +798,9 @@ export const Home: React.FC = () => {
     setDetailTask(task);
   };
 
-  const confirmCheckIn = async (duration?: number, quantity?: number, note?: string) => {
+  const confirmCheckIn = async (duration?: number, quantity?: number, note?: string, photo?: string) => {
     if (selectedTask) {
-      await addCheckIn(selectedTask.id, selectedTask.categoryId, duration, quantity, note);
+      await addCheckIn(selectedTask.id, selectedTask.categoryId, duration, quantity, note, photo);
     }
   };
 
@@ -613,7 +835,7 @@ export const Home: React.FC = () => {
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <Zap className="w-6 sm:w-8 h-6 sm:h-8 text-yellow-400" />
                 <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                  DailyCheck
+                  今日打卡
                 </h1>
               </div>
               <p className="text-blue-200 mt-1 sm:mt-2 text-sm sm:text-lg">
@@ -644,11 +866,15 @@ export const Home: React.FC = () => {
               <div
                 className="h-full rounded-full bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 transition-all duration-700 shadow-lg"
                 style={{ width: `${totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0}%` }}
-              />
+/>
             </div>
             <div className="flex justify-between mt-1.5 text-xs text-blue-300">
               <span>已完成 {Math.round(totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0)}%</span>
               <span>{completedTasks === totalTasks && totalTasks > 0 ? '🎉 全部完成！' : '加油！'}</span>
+            </div>
+            <div className={`mt-3 pt-3 border-t border-white/10 flex items-center ${dailyQuote.color}`}>
+              {React.createElement(dailyQuote.icon, { className: "w-4 h-4 mr-2" })}
+              <span className="text-sm font-medium">{dailyQuote.text}</span>
             </div>
           </div>
         </div>

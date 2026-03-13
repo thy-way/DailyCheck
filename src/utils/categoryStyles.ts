@@ -31,6 +31,13 @@ export const CATEGORY_STYLES: Record<
     border: 'border-green-200',
     gradient: 'from-green-500 to-emerald-600',
   },
+  exam: {
+    bg: 'bg-purple-500',
+    bgLight: 'bg-purple-50',
+    text: 'text-purple-600',
+    border: 'border-purple-200',
+    gradient: 'from-purple-500 to-violet-600',
+  },
   side: {
     bg: 'bg-amber-500',
     bgLight: 'bg-amber-50',

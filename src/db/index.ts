@@ -9,7 +9,7 @@ class CheckInDatabase extends Dexie {
   constructor() {
     super('DailyCheckDB');
 
-    this.version(4).stores({
+    this.version(5).stores({
       checkIns: '++id, taskId, categoryId, date, timestamp',
       categories: 'id, name, enabled',
       tasks: 'id, categoryId, name, enabled, order',

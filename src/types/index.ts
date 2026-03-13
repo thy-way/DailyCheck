@@ -1,4 +1,4 @@
-export type CategoryId = 'fitness' | 'coding' | 'english' | 'side';
+export type CategoryId = 'fitness' | 'coding' | 'english' | 'exam' | 'side';
 
 export interface Task {
   id: string;
@@ -25,6 +25,7 @@ export interface CheckIn {
   note?: string;
   duration?: number;
   quantity?: number;
+  photo?: string;
   createdAt: number;
 }
 
