@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Calendar, Trash2, Edit2, CheckCircle, Circle } from 'lucide-react';
 import { useQuadrantStore } from '@/store';
+import { useCheckInStore } from '@/store';
 import { QuadrantTask } from '@/types';
 import { cn } from '@/utils';
 
@@ -63,6 +64,7 @@ export const Quadrants: React.FC = () => {
     urgency: 'high' | 'low';
     importance: 'high' | 'low';
     dueDate?: string;
+    relatedTaskId?: string;
   }) => {
     await addTask({
       ...data,
@@ -270,15 +272,20 @@ const AddTaskDialog: React.FC<{
     urgency: 'high' | 'low';
     importance: 'high' | 'low';
     dueDate?: string;
+    relatedTaskId?: string;
   }) => void;
   defaultUrgency?: 'high' | 'low';
   defaultImportance?: 'high' | 'low';
 }> = ({ onClose, onConfirm, defaultUrgency = 'high', defaultImportance = 'high' }) => {
+  const { tasks } = useCheckInStore();
+  const enabledTasks = tasks.filter(t => t.enabled).sort((a, b) => a.order - b.order);
+  
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [urgency, setUrgency] = useState<'high' | 'low'>(defaultUrgency);
   const [importance, setImportance] = useState<'high' | 'low'>(defaultImportance);
   const [dueDate, setDueDate] = useState('');
+  const [relatedTaskId, setRelatedTaskId] = useState<string>('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -290,6 +297,7 @@ const AddTaskDialog: React.FC<{
       urgency,
       importance,
       dueDate: dueDate || undefined,
+      relatedTaskId: relatedTaskId || undefined,
     });
   };
 
@@ -309,6 +317,19 @@ const AddTaskDialog: React.FC<{
               placeholder="输入任务标题"
               autoFocus
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">关联打卡事项（可选）</label>
+            <select
+              value={relatedTaskId}
+              onChange={(e) => setRelatedTaskId(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">不关联打卡事项</option>
+              {enabledTasks.map((task) => (
+                <option key={task.id} value={task.id}>{task.name}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">描述</label>

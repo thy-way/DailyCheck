@@ -3,8 +3,8 @@ import { format, subDays, parseISO } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { useCheckInStore } from '@/store';
 import { TrendChart, CategoryPieChart, WeeklyBarChart } from '@/components/Charts';
-import { Card } from '@/components/ui/Card';
 import { CategoryId } from '@/types';
+import { cn } from '@/utils';
 
 export const Stats: React.FC = () => {
   const { getDailyStats, getWeeklyStats, categories } = useCheckInStore();
@@ -69,50 +69,56 @@ export const Stats: React.FC = () => {
   }, [timeRange, getDailyStats, getWeeklyStats, categories]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-5">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900">数据统计</h1>
-        </div>
-      </header>
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-        <div className="flex flex-wrap gap-2">
-          {(['7d', '30d', '90d'] as const).map((range) => (
-            <button
-              key={range}
-              onClick={() => setTimeRange(range)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                timeRange === range
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              {range === '7d' ? '近7天' : range === '30d' ? '近30天' : '近90天'}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Card>
-            <div className="text-center">
-              <p className="text-3xl font-bold text-blue-600">{totalCheckIns}</p>
-              <p className="text-sm text-gray-500 mt-1">总打卡次数</p>
-            </div>
-          </Card>
-          <Card>
-            <div className="text-center">
-              <p className="text-3xl font-bold text-green-600">{avgPerDay}</p>
-              <p className="text-sm text-gray-500 mt-1">日均打卡</p>
-            </div>
-          </Card>
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">📊 统计</h1>
+            <p className="text-gray-600 mt-1">数据可视化分析</p>
+          </div>
+          <div className="flex bg-white rounded-xl p-1 shadow-sm">
+            {(['7d', '30d', '90d'] as const).map((range) => (
+              <button
+                key={range}
+                onClick={() => setTimeRange(range)}
+                className={cn(
+                  'px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all',
+                  timeRange === range
+                    ? 'bg-blue-500 text-white shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                )}
+              >
+                {range === '7d' ? '7天' : range === '30d' ? '30天' : '90天'}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <TrendChart data={trendData} title="打卡趋势" />
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
+          <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm">
+            <div className="text-sm text-gray-500 mb-1">总打卡</div>
+            <div className="text-3xl sm:text-4xl font-bold text-blue-600">{totalCheckIns}</div>
+          </div>
+          <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm">
+            <div className="text-sm text-gray-500 mb-1">日均</div>
+            <div className="text-3xl sm:text-4xl font-bold text-green-600">{avgPerDay}</div>
+          </div>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <CategoryPieChart data={pieData} title="分类分布" />
-          <WeeklyBarChart data={weeklyData} title="本周统计" />
+        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+          <h3 className="font-semibold text-gray-900 mb-4">📈 打卡趋势</h3>
+          <TrendChart data={trendData} />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+            <h3 className="font-semibold text-gray-900 mb-4">🎯 分类分布</h3>
+            <CategoryPieChart data={pieData} />
+          </div>
+          <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+            <h3 className="font-semibold text-gray-900 mb-4">📅 本周统计</h3>
+            <WeeklyBarChart data={weeklyData} />
+          </div>
         </div>
       </div>
     </div>

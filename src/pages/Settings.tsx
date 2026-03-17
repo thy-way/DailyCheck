@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { useSettingsStore, useCheckInStore } from '@/store';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
 import { Switch } from '@/components/ui/Switch';
-import { Select } from '@/components/ui/Select';
 import { CATEGORY_STYLES } from '@/utils/categoryStyles';
 import { cn } from '@/utils';
-import { Download, Upload, Trash2, AlertTriangle } from 'lucide-react';
+import { Download, Upload, Trash2, AlertTriangle, Flame } from 'lucide-react';
 
 export const Settings: React.FC = () => {
   const {
@@ -72,37 +69,46 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-5">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900">设置</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">⚙️ 设置</h1>
+          <p className="text-gray-600 mt-1">自定义你的打卡体验</p>
         </div>
-      </header>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-        <Card>
-          <h2 className="font-semibold text-gray-900 mb-4">分类管理</h2>
-          <div className="space-y-4">
+        <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
+          <div className="flex items-center justify-center py-4">
+            <div className="text-center">
+              <div className="flex items-center justify-center space-x-2 text-orange-500 mb-2">
+                <Flame className="w-8 h-8" />
+                <span className="text-5xl font-bold">{streak}</span>
+              </div>
+              <p className="text-gray-600">连续打卡天数</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
+          <h2 className="font-semibold text-gray-900 mb-4">📂 分类管理</h2>
+          <div className="space-y-3">
             {categories.map((cat) => {
               const styles = CATEGORY_STYLES[cat.id];
               return (
-                <div key={cat.id} className="flex items-center justify-between">
+                <div key={cat.id} className="flex items-center justify-between py-2">
                   <div className="flex items-center space-x-3">
                     <div className={cn('w-3 h-3 rounded-full', styles.bg)} />
-                    <span className="font-medium text-gray-900">{cat.name}</span>
+                    <span className="text-gray-900">{cat.name}</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Select
+                    <select
                       value={cat.dailyGoal || 1}
                       onChange={(e) => updateCategoryGoal(cat.id, Number(e.target.value))}
-                      options={[
-                        { value: 1, label: '每日 1 次' },
-                        { value: 2, label: '每日 2 次' },
-                        { value: 3, label: '每日 3 次' },
-                        { value: 4, label: '每日 4 次' },
-                        { value: 5, label: '每日 5 次' },
-                      ]}
-                    />
+                      className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {[1, 2, 3, 4, 5].map(n => (
+                        <option key={n} value={n}>每日 {n} 次</option>
+                      ))}
+                    </select>
                     <Switch
                       checked={cat.enabled}
                       onChange={() => toggleCategory(cat.id)}
@@ -112,10 +118,10 @@ export const Settings: React.FC = () => {
               );
             })}
           </div>
-        </Card>
+        </div>
 
-        <Card>
-          <h2 className="font-semibold text-gray-900 mb-4">提醒设置</h2>
+        <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
+          <h2 className="font-semibold text-gray-900 mb-4">🔔 提醒设置</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-gray-700">每日提醒</span>
@@ -125,57 +131,49 @@ export const Settings: React.FC = () => {
               />
             </div>
             {settings.reminderEnabled && (
-              <Select
-                label="提醒时间"
+              <select
                 value={settings.reminderTime}
                 onChange={(e) => setReminder(true, e.target.value)}
-                options={Array.from({ length: 24 }, (_, i) => ({
-                  value: `${String(i).padStart(2, '0')}:00`,
-                  label: `${String(i).padStart(2, '0')}:00`,
-                }))}
-              />
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {Array.from({ length: 24 }, (_, i) => (
+                  <option key={i} value={`${String(i).padStart(2, '0')}:00`}>
+                    {String(i).padStart(2, '0')}:00
+                  </option>
+                ))}
+              </select>
             )}
           </div>
-        </Card>
+        </div>
 
-        <Card>
-          <h2 className="font-semibold text-gray-900 mb-4">数据管理</h2>
-          <div className="space-y-3">
-            <Button
-              variant="outline"
-              className="w-full justify-start"
+        <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">💾 数据管理</h2>
+          <div className="space-y-2">
+            <button
               onClick={handleExport}
               disabled={exporting}
+              className="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
             >
-              <Download className="w-4 h-4 mr-2" />
+              <Download className="w-5 h-5 mr-3 text-blue-500" />
               导出数据
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start"
+            </button>
+            <button
               onClick={handleImport}
               disabled={importing}
+              className="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
             >
-              <Upload className="w-4 h-4 mr-2" />
+              <Upload className="w-5 h-5 mr-3 text-green-500" />
               导入数据
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+            </button>
+            <button
               onClick={() => setResetDialogOpen(true)}
+              className="w-full flex items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
+              <Trash2 className="w-5 h-5 mr-3" />
               清空所有数据
-            </Button>
+            </button>
           </div>
-        </Card>
-
-        <Card>
-          <div className="text-center text-sm text-gray-500">
-            <p>DailyCheck v1.0.0</p>
-            <p className="mt-1">当前连续打卡 <span className="font-semibold text-orange-500">{streak}</span> 天</p>
-          </div>
-        </Card>
+        </div>
       </div>
 
       <Dialog open={resetDialogOpen} onClose={() => setResetDialogOpen(false)} title="确认清空">
@@ -185,12 +183,18 @@ export const Settings: React.FC = () => {
             <span className="text-sm">此操作将清除所有打卡记录，无法恢复！</span>
           </div>
           <div className="flex space-x-3">
-            <Button variant="outline" className="flex-1" onClick={() => setResetDialogOpen(false)}>
+            <button
+              onClick={() => setResetDialogOpen(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            >
               取消
-            </Button>
-            <Button className="flex-1 bg-red-500 hover:bg-red-600" onClick={handleReset}>
+            </button>
+            <button
+              onClick={handleReset}
+              className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            >
               确认清空
-            </Button>
+            </button>
           </div>
         </div>
       </Dialog>

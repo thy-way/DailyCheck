@@ -207,36 +207,6 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
-  // ========== 编程学习模块 - 学习 ==========
-  {
-    id: 'coding-learning',
-    categoryId: 'coding',
-    name: '📚 学习路线',
-    icon: 'BookOpen',
-    unit: '分钟',
-    defaultDuration: 120,
-    enabled: true,
-    order: 1,
-    group: '学习',
-    groupOrder: 1,
-    description: '系统学习路线，点击查看各语言详细计划',
-    learningRoute: [
-      '🟣 Java 后端 - Spring Boot 微服务',
-      '🟢 Go 后端 - 云原生开发',
-      '🔵 Python 全栈 - AI/数据科学',
-      '🔴 C++ 开发 - 底层系统',
-      '🟡 前端/全栈 - React + Node.js',
-      '⚫ 算法刷题 - LeetCode',
-      '📖 技术书籍 - 源码阅读'
-    ],
-    resources: [
-      { name: 'Java Guide', url: 'https://javaguide.cn' },
-      { name: 'Go 语言圣经', url: 'https://book.go-zh.org/' },
-      { name: 'Python 官方文档', url: 'https://docs.python.org/3/' },
-      { name: '代码随想录', url: 'https://programmercarl.com' }
-    ]
-  },
-
   // ========== 编程学习 - Java ==========
   {
     id: 'coding-java',
@@ -505,33 +475,7 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
-  // ========== 编程学习模块 - 项目实战 ==========
-  {
-    id: 'coding-projects',
-    categoryId: 'coding',
-    name: '🚀 项目实战',
-    icon: 'Folder',
-    unit: '周',
-    defaultDuration: 28,
-    enabled: true,
-    order: 80,
-    group: '项目实战',
-    groupOrder: 1,
-    description: '完整项目开发，按语言分类，点击查看详情',
-    learningRoute: [
-      '🟣 Java 项目 - 电商后台管理系统',
-      '🟢 Go 项目 - 微服务电商平台',
-      '🔵 Python 项目 - 数据可视化 Dashboard',
-      '🟡 前端项目 - 博客系统 + AI 聊天'
-    ],
-    resources: [
-      { name: 'GitHub Trending', url: 'https://github.com/trending' },
-      { name: 'Vercel 部署', url: 'https://vercel.com' },
-      { name: 'Docker Docs', url: 'https://docs.docker.com' }
-    ]
-  },
-
-  // ========== 项目实战 - Java 电商后台 ==========
+  // ========== 编程学习 - Go ==========
   {
     id: 'coding-project-java',
     categoryId: 'coding',
@@ -541,7 +485,7 @@ export const DEFAULT_TASKS: Task[] = [
     defaultDuration: 28,
     enabled: true,
     order: 90,
-    group: '项目实战',
+    group: 'Java 项目',
     groupOrder: 10,
     description: 'Vue3 + Spring Boot 电商后台管理系统',
     learningRoute: [
@@ -578,7 +522,7 @@ export const DEFAULT_TASKS: Task[] = [
     ]
   },
 
-  // ========== 项目实战 - Go 微服务 ==========
+  // ========== 编程学习 - Go ==========
   {
     id: 'coding-project-go',
     categoryId: 'coding',
@@ -588,7 +532,7 @@ export const DEFAULT_TASKS: Task[] = [
     defaultDuration: 28,
     enabled: true,
     order: 100,
-    group: '项目实战',
+    group: '项目',
     groupOrder: 20,
     description: 'Go + gRPC 微服务电商平台',
     learningRoute: [
@@ -639,7 +583,7 @@ export const DEFAULT_TASKS: Task[] = [
     defaultDuration: 28,
     enabled: true,
     order: 110,
-    group: '项目实战',
+    group: '项目',
     groupOrder: 30,
     description: 'ECharts + Flask 数据可视化 Dashboard',
     learningRoute: [
@@ -688,7 +632,7 @@ export const DEFAULT_TASKS: Task[] = [
     defaultDuration: 21,
     enabled: true,
     order: 120,
-    group: '项目实战',
+    group: '项目',
     groupOrder: 40,
     description: 'Next.js + Tailwind 全栈博客项目',
     learningRoute: [
@@ -735,7 +679,7 @@ export const DEFAULT_TASKS: Task[] = [
     defaultDuration: 28,
     enabled: true,
     order: 130,
-    group: '项目实战',
+    group: '项目',
     groupOrder: 50,
     description: 'React + OpenAI API 聊天应用',
     learningRoute: [
