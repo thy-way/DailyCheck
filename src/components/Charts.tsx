@@ -22,6 +22,7 @@ const CATEGORY_COLORS: Record<CategoryId, string> = {
   fitness: '#ef4444',
   coding: '#3b82f6',
   english: '#22c55e',
+  exam: '#8b5cf6',
   side: '#f59e0b',
 };
 

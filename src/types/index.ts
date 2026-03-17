@@ -70,3 +70,50 @@ export interface ExportData {
   tasks: Task[];
   checkIns: CheckIn[];
 }
+
+// ============ 四象限法则 ============
+
+export interface QuadrantTask {
+  id?: number;
+  title: string;
+  description?: string;
+  urgency: 'high' | 'low';
+  importance: 'high' | 'low';
+  status: 'pending' | 'in_progress' | 'completed';
+  dueDate?: string;
+  relatedTaskId?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export type QuadrantType = 
+  | 'urgent-important'
+  | 'urgent-not-important'
+  | 'not-urgent-important'
+  | 'not-urgent-not-important';
+
+// ============ 番茄工作法 ============
+
+export interface TomatoSession {
+  id?: number;
+  taskId?: string;
+  type: 'focus' | 'short-break' | 'long-break';
+  duration: number;
+  actualDuration?: number;
+  completed: boolean;
+  note?: string;
+  startDate: number;
+  endDate?: number;
+  createdAt: number;
+}
+
+export interface TomatoSettings {
+  id?: number;
+  focusDuration: number;
+  shortBreakDuration: number;
+  longBreakDuration: number;
+  longBreakInterval: number;
+  autoStartBreaks: boolean;
+  autoStartPomodoros: boolean;
+  soundEnabled: boolean;
+}

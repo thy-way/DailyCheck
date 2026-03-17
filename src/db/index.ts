@@ -1,18 +1,24 @@
 import Dexie, { Table } from 'dexie';
-import { CheckIn, Category, Task } from '../types';
+import { CheckIn, Category, Task, QuadrantTask, TomatoSession, TomatoSettings } from '../types';
 
 class CheckInDatabase extends Dexie {
   checkIns!: Table<CheckIn, number>;
   categories!: Table<Category, string>;
   tasks!: Table<Task, string>;
+  quadrants!: Table<QuadrantTask, number>;
+  tomatoSessions!: Table<TomatoSession, number>;
+  tomatoSettings!: Table<TomatoSettings, number>;
 
   constructor() {
     super('DailyCheckDB');
 
-    this.version(5).stores({
+    this.version(7).stores({
       checkIns: '++id, taskId, categoryId, date, timestamp',
       categories: 'id, name, enabled',
       tasks: 'id, categoryId, name, enabled, order',
+      quadrants: '++id, urgency, importance, status, dueDate, createdAt',
+      tomatoSessions: '++id, taskId, type, completed, startDate',
+      tomatoSettings: '++id',
     }).upgrade(async (tx) => {
       await tx.table('tasks').clear();
       await tx.table('categories').clear();

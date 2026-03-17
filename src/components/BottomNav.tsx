@@ -1,10 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Calendar, BarChart2, Settings } from 'lucide-react';
+import { Home, Calendar, BarChart2, Settings, Target, Timer } from 'lucide-react';
 import { cn } from '@/utils';
 
 const navItems = [
   { to: '/', icon: Home, label: '打卡' },
+  { to: '/quadrants', icon: Target, label: '计划' },
+  { to: '/tomato', icon: Timer, label: '番茄' },
   { to: '/calendar', icon: Calendar, label: '日历' },
   { to: '/stats', icon: BarChart2, label: '统计' },
   { to: '/settings', icon: Settings, label: '设置' },
