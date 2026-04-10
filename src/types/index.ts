@@ -14,6 +14,7 @@ export interface Task {
   description?: string;
   learningRoute?: string[];
   resources?: { name: string; url?: string }[];
+  quadrant?: QuadrantType; // 四象限分配
 }
 
 export interface CheckIn {

@@ -12,16 +12,13 @@ class CheckInDatabase extends Dexie {
   constructor() {
     super('DailyCheckDB');
 
-    this.version(7).stores({
+    this.version(8).stores({
       checkIns: '++id, taskId, categoryId, date, timestamp',
       categories: 'id, name, enabled',
-      tasks: 'id, categoryId, name, enabled, order',
+      tasks: 'id, categoryId, name, enabled, order, quadrant',
       quadrants: '++id, urgency, importance, status, dueDate, createdAt',
       tomatoSessions: '++id, taskId, type, completed, startDate',
       tomatoSettings: '++id',
-    }).upgrade(async (tx) => {
-      await tx.table('tasks').clear();
-      await tx.table('categories').clear();
     });
   }
 }

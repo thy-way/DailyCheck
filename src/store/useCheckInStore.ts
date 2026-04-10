@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { db, initializeDatabase } from '../db';
-import { CheckIn, CategoryId, DailyStats, WeeklyStats, Category, Task } from '../types';
+import { CheckIn, CategoryId, DailyStats, WeeklyStats, Category, Task, QuadrantType } from '../types';
 import { DEFAULT_CATEGORIES, DEFAULT_TASKS } from '../types/categories';
 import {
   format,
@@ -25,11 +25,12 @@ interface CheckInState {
   loadCategories: () => Promise<void>;
   loadTasks: () => Promise<void>;
   loadDateCheckIns: (date: string) => Promise<CheckIn[]>;
-  addCheckIn: (taskId: string, categoryId: CategoryId, duration?: number, quantity?: number, note?: string) => Promise<CheckIn>;
+  addCheckIn: (taskId: string, categoryId: CategoryId, duration?: number, quantity?: number, note?: string, photo?: string) => Promise<CheckIn>;
   removeCheckIn: (id: number) => Promise<void>;
   getDailyStats: (date: string) => Promise<DailyStats>;
   getWeeklyStats: (date?: Date) => Promise<WeeklyStats>;
   calculateStreak: () => Promise<number>;
+  updateTaskQuadrant: (taskId: string, quadrant: QuadrantType | undefined) => Promise<void>;
 }
 
 export const useCheckInStore = create<CheckInState>((set, get) => ({
@@ -64,20 +65,11 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     set({ categories });
   },
 
-  loadTasks: async () => {
-    let tasks = await db.tasks.toArray();
-    if (tasks.length === 0) {
-      await db.tasks.bulkAdd(DEFAULT_TASKS);
-      tasks = DEFAULT_TASKS;
-    }
-    set({ tasks });
-  },
-
   loadDateCheckIns: async (date: string) => {
     return await db.checkIns.where('date').equals(date).toArray();
   },
 
-  addCheckIn: async (taskId: string, categoryId: CategoryId, duration?: number, quantity?: number, note?: string) => {
+  addCheckIn: async (taskId: string, categoryId: CategoryId, duration?: number, quantity?: number, note?: string, photo?: string) => {
     const now = Date.now();
     const date = format(now, 'yyyy-MM-dd');
 
@@ -89,6 +81,7 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
       duration,
       quantity,
       note,
+      photo,
       createdAt: now,
     };
 
@@ -100,6 +93,15 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     set({ streak });
 
     return checkIn;
+  },
+
+  loadTasks: async () => {
+    let tasks = await db.tasks.toArray();
+    if (tasks.length === 0) {
+      await db.tasks.bulkAdd(DEFAULT_TASKS);
+      tasks = DEFAULT_TASKS;
+    }
+    set({ tasks });
   },
 
   removeCheckIn: async (id: number) => {
@@ -198,5 +200,10 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     }
 
     return streak;
+  },
+
+  updateTaskQuadrant: async (taskId: string, quadrant: QuadrantType | undefined) => {
+    await db.tasks.update(taskId, { quadrant });
+    await get().loadTasks();
   },
 }));

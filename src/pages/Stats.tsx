@@ -1,126 +1,272 @@
 import React, { useEffect, useState } from 'react';
-import { format, subDays, parseISO } from 'date-fns';
+import { format, subDays, parseISO, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { useCheckInStore } from '@/store';
-import { TrendChart, CategoryPieChart, WeeklyBarChart } from '@/components/Charts';
-import { CategoryId } from '@/types';
+import { CheckIn } from '@/types';
 import { cn } from '@/utils';
+import { Calendar, Target, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+
+interface DailyRecord {
+  date: string;
+  checkIns: CheckIn[];
+  totalDuration: number;
+  totalCount: number;
+  categories: Record<string, number>;
+}
+
+const getCategoryName = (categoryId: string, categories: { id: string; name: string }[]) => {
+  const cat = categories.find(c => c.id === categoryId);
+  return cat?.name || categoryId;
+};
+
+const getCategoryColor = (categoryId: string, categories: { id: string; name: string; color: string }[]) => {
+  const cat = categories.find(c => c.id === categoryId);
+  return cat?.color || '#3b82f6';
+};
 
 export const Stats: React.FC = () => {
-  const { getDailyStats, getWeeklyStats, categories } = useCheckInStore();
-  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('7d');
-  const [trendData, setTrendData] = useState<{ date: string; count: number }[]>([]);
-  const [pieData, setPieData] = useState<{ name: string; value: number; id: CategoryId }[]>([]);
-  const [weeklyData, setWeeklyData] = useState<{ day: string; count: number }[]>([]);
-  const [totalCheckIns, setTotalCheckIns] = useState(0);
-  const [avgPerDay, setAvgPerDay] = useState(0);
+  const { categories, tasks, getDailyStats } = useCheckInStore();
+  const [currentWeek, setCurrentWeek] = useState(new Date());
+  const [weeklyRecords, setWeeklyRecords] = useState<DailyRecord[]>([]);
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [selectedDayCheckIns, setSelectedDayCheckIns] = useState<CheckIn[]>([]);
+
+  // Get week date range
+  const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 }); // Monday
+  const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
+  const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
   useEffect(() => {
-    const loadStats = async () => {
-      const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
-      const trend: { date: string; count: number }[] = [];
-      const categoryTotals: Record<CategoryId, number> = {} as Record<CategoryId, number>;
+    const loadWeeklyData = async (): Promise<void> => {
+      const records: DailyRecord[] = [];
 
-      categories.forEach((cat) => {
-        categoryTotals[cat.id] = 0;
-      });
-
-      let total = 0;
-
-      for (let i = days - 1; i >= 0; i--) {
-        const date = subDays(new Date(), i);
-        const dateStr = format(date, 'yyyy-MM-dd');
+      for (const day of weekDays) {
+        const dateStr = format(day, 'yyyy-MM-dd');
         const stats = await getDailyStats(dateStr);
+        
+        const dayCheckIns = await useCheckInStore.getState().loadDateCheckIns(dateStr);
+        
+        const categoryCount: Record<string, number> = {};
+        dayCheckIns.forEach(ci => {
+          categoryCount[ci.categoryId] = (categoryCount[ci.categoryId] || 0) + 1;
+        });
 
-        trend.push({ date: dateStr, count: stats.totalCheckIns });
-        total += stats.totalCheckIns;
-
-        Object.entries(stats.byCategory).forEach(([catId, count]) => {
-          categoryTotals[catId as CategoryId] = (categoryTotals[catId as CategoryId] || 0) + count;
+        records.push({
+          date: dateStr,
+          checkIns: dayCheckIns,
+          totalDuration: stats.totalCheckIns * 30, // Approximate
+          totalCount: stats.totalCheckIns,
+          categories: categoryCount,
         });
       }
 
-      setTrendData(trend);
-      setTotalCheckIns(total);
-      setAvgPerDay(Number((total / days).toFixed(1)));
-
-      const pie = Object.entries(categoryTotals)
-        .filter(([_, value]) => value > 0)
-        .map(([id, value]) => {
-          const cat = categories.find((c) => c.id === id);
-          return {
-            name: cat?.name || id,
-            value,
-            id: id as CategoryId,
-          };
-        });
-
-      setPieData(pie);
-
-      const weeklyStats = await getWeeklyStats();
-      const weekly = weeklyStats.days.map((day) => ({
-        day: format(parseISO(day.date), 'E', { locale: zhCN }),
-        count: day.totalCheckIns,
-      }));
-      setWeeklyData(weekly);
+      setWeeklyRecords(records);
     };
 
-    loadStats();
-  }, [timeRange, getDailyStats, getWeeklyStats, categories]);
+    loadWeeklyData();
+  }, [currentWeek, getDailyStats, weekDays]);
+
+  const handlePrevWeek = () => {
+    setCurrentWeek(subDays(weekStart, 1));
+    setSelectedDay(null);
+  };
+
+  const handleNextWeek = () => {
+    setCurrentWeek(subDays(weekEnd, -7));
+    setSelectedDay(null);
+  };
+
+  const handleDayClick = (date: string) => {
+    setSelectedDay(date);
+    const record = weeklyRecords.find(r => r.date === date);
+    setSelectedDayCheckIns(record?.checkIns || []);
+  };
+
+  const getTaskName = (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    return task?.name || taskId;
+  };
+
+  // Calculate weekly summary
+  const weeklyTotal = weeklyRecords.reduce((acc, r) => acc + r.totalCount, 0);
+  const weeklyAvg = Math.round(weeklyTotal / 7 * 10) / 10;
+  const completedDays = weeklyRecords.filter(r => r.totalCount > 0).length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">📊 统计</h1>
-            <p className="text-gray-600 mt-1">数据可视化分析</p>
-          </div>
-          <div className="flex bg-white rounded-xl p-1 shadow-sm">
-            {(['7d', '30d', '90d'] as const).map((range) => (
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">📋 复盘总结</h1>
+          <p className="text-gray-600 mt-1">回顾每日打卡，分析成长轨迹</p>
+        </div>
+
+        {/* Weekly Summary Card */}
+        <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-800">本周概况</h2>
+            <div className="flex items-center gap-2">
               <button
-                key={range}
-                onClick={() => setTimeRange(range)}
-                className={cn(
-                  'px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all',
-                  timeRange === range
-                    ? 'bg-blue-500 text-white shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                )}
+                onClick={handlePrevWeek}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                {range === '7d' ? '7天' : range === '30d' ? '30天' : '90天'}
+                <ChevronLeft className="w-5 h-5 text-gray-600" />
               </button>
-            ))}
+              <span className="text-sm font-medium text-gray-700 min-w-[120px] text-center">
+                {format(weekStart, 'MM/dd')} - {format(weekEnd, 'MM/dd')}
+              </span>
+              <button
+                onClick={handleNextWeek}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-blue-50 rounded-xl">
+              <div className="text-3xl font-bold text-blue-600">{weeklyTotal}</div>
+              <div className="text-sm text-gray-600 mt-1">本周打卡</div>
+            </div>
+            <div className="text-center p-4 bg-green-50 rounded-xl">
+              <div className="text-3xl font-bold text-green-600">{weeklyAvg}</div>
+              <div className="text-sm text-gray-600 mt-1">日均打卡</div>
+            </div>
+            <div className="text-center p-4 bg-purple-50 rounded-xl">
+              <div className="text-3xl font-bold text-purple-600">{completedDays}/7</div>
+              <div className="text-sm text-gray-600 mt-1">打卡天数</div>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
-          <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm">
-            <div className="text-sm text-gray-500 mb-1">总打卡</div>
-            <div className="text-3xl sm:text-4xl font-bold text-blue-600">{totalCheckIns}</div>
-          </div>
-          <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm">
-            <div className="text-sm text-gray-500 mb-1">日均</div>
-            <div className="text-3xl sm:text-4xl font-bold text-green-600">{avgPerDay}</div>
+        {/* Week Calendar View */}
+        <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
+          <div className="grid grid-cols-7 gap-2">
+            {weekDays.map((day) => {
+              const dateStr = format(day, 'yyyy-MM-dd');
+              const record = weeklyRecords.find(r => r.date === dateStr);
+              const isToday = format(new Date(), 'yyyy-MM-dd') === dateStr;
+              const isSelected = selectedDay === dateStr;
+              const hasCheckIns = record && record.totalCount > 0;
+
+              return (
+                <button
+                  key={dateStr}
+                  onClick={() => handleDayClick(dateStr)}
+                  className={cn(
+                    'p-3 rounded-xl text-center transition-all',
+                    isSelected
+                      ? 'bg-blue-600 text-white'
+                      : hasCheckIns
+                        ? 'bg-blue-50 text-gray-800'
+                        : 'bg-gray-50 text-gray-400',
+                    isToday && !isSelected && 'ring-2 ring-blue-400'
+                  )}
+                >
+                  <div className="text-xs mb-1">{format(day, 'EEE', { locale: zhCN })}</div>
+                  <div className={cn(
+                    'text-lg font-semibold',
+                    isSelected ? 'text-white' : 'text-gray-800'
+                  )}>
+                    {format(day, 'd')}
+                  </div>
+                  {hasCheckIns && !isSelected && (
+                    <div className="text-xs text-blue-600 mt-1">{record.totalCount}次</div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
-          <h3 className="font-semibold text-gray-900 mb-4">📈 打卡趋势</h3>
-          <TrendChart data={trendData} />
-        </div>
+        {/* Daily Detail View */}
+        {selectedDay && (
+          <div className="bg-white rounded-2xl shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-blue-600" />
+                {format(parseISO(selectedDay), 'yyyy年MM月dd日 EEEE', { locale: zhCN })}
+              </h2>
+              <div className="flex items-center gap-3 text-sm text-gray-500">
+                <span className="flex items-center gap-1">
+                  <Target className="w-4 h-4" />
+                  {selectedDayCheckIns.length} 项任务
+                </span>
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">🎯 分类分布</h3>
-            <CategoryPieChart data={pieData} />
+            {selectedDayCheckIns.length > 0 ? (
+              <div className="space-y-3">
+                {selectedDayCheckIns.map((checkIn, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl"
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: getCategoryColor(checkIn.categoryId, categories as any) }}
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-800">
+                        {getTaskName(checkIn.taskId)}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {getCategoryName(checkIn.categoryId, categories as any)}
+                        {checkIn.duration && ` · ${checkIn.duration}分钟`}
+                        {checkIn.note && ` · ${checkIn.note}`}
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      {format(new Date(checkIn.timestamp), 'HH:mm')}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-400">
+                <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p>当日无打卡记录</p>
+              </div>
+            )}
+
+            {/* Category Summary */}
+            {selectedDayCheckIns.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <h3 className="text-sm font-medium text-gray-600 mb-3">分类统计</h3>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(
+                    selectedDayCheckIns.reduce((acc, ci) => {
+                      acc[ci.categoryId] = (acc[ci.categoryId] || 0) + 1;
+                      return acc;
+                    }, {} as Record<string, number>)
+                  ).map(([catId, count]) => (
+                    <span
+                      key={catId}
+                      className="px-3 py-1.5 rounded-lg text-sm font-medium"
+                      style={{
+                        backgroundColor: `${getCategoryColor(catId, categories as any)}15`,
+                        color: getCategoryColor(catId, categories as any),
+                      }}
+                    >
+                      {getCategoryName(catId, categories as any)}: {count}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-          <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">📅 本周统计</h3>
-            <WeeklyBarChart data={weeklyData} />
+        )}
+
+        {!selectedDay && (
+          <div className="text-center py-8 text-gray-400">
+            <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
+            <p>点击上方日期查看详细打卡记录</p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 };
+
+export default Stats;

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { useSettingsStore, useCheckInStore } from '@/store';
+import React, { useState, useRef } from 'react';
+import { useSettingsStore, useCheckInStore, useAuthStore, DEFAULT_AVATARS } from '@/store';
 import { Dialog } from '@/components/ui/Dialog';
 import { Switch } from '@/components/ui/Switch';
 import { CATEGORY_STYLES } from '@/utils/categoryStyles';
 import { cn } from '@/utils';
-import { Download, Upload, Trash2, AlertTriangle, Flame } from 'lucide-react';
+import { Download, Upload, Trash2, AlertTriangle, Flame, LogOut, Camera, Edit2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const Settings: React.FC = () => {
   const {
@@ -18,10 +19,29 @@ export const Settings: React.FC = () => {
     resetToDefaults,
   } = useSettingsStore();
   const { streak } = useCheckInStore();
+  const { profile, logout, updateProfile, setAvatar } = useAuthStore();
+  const navigate = useNavigate();
 
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Edit form state
+  const [editForm, setEditForm] = useState({
+    username: profile.username,
+    bio: profile.bio || '',
+    phone: profile.phone || '',
+    email: profile.email || '',
+  });
+
+  const handleLogout = () => {
+    if (confirm('确定要退出登录吗？')) {
+      logout();
+      navigate('/login');
+    }
+  };
 
   const handleExport = async () => {
     setExporting(true);
@@ -68,6 +88,28 @@ export const Settings: React.FC = () => {
     window.location.reload();
   };
 
+  const handleSaveProfile = () => {
+    updateProfile(editForm);
+    setEditProfileOpen(false);
+  };
+
+  const handleAvatarSelect = (emoji: string) => {
+    setAvatar(emoji);
+  };
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const isCustomAvatar = profile.avatar && !DEFAULT_AVATARS.includes(profile.avatar);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
@@ -76,6 +118,42 @@ export const Settings: React.FC = () => {
           <p className="text-gray-600 mt-1">自定义你的打卡体验</p>
         </div>
 
+        {/* Profile Section */}
+        <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              {/* Avatar */}
+              <div className="relative">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-4xl overflow-hidden">
+                  {isCustomAvatar ? (
+                    <img src={profile.avatar} alt="avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    profile.avatar || '👤'
+                  )}
+                </div>
+                <button
+                  onClick={() => setEditProfileOpen(true)}
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-md hover:bg-blue-600 transition-colors"
+                >
+                  <Camera className="w-4 h-4" />
+                </button>
+              </div>
+              {/* Info */}
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">{profile.username || '未设置用户名'}</h2>
+                <p className="text-gray-500 text-sm">{profile.bio || '点击编辑完善个人资料'}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setEditProfileOpen(true)}
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <Edit2 className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Streak */}
         <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
           <div className="flex items-center justify-center py-4">
             <div className="text-center">
@@ -174,8 +252,20 @@ export const Settings: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {/* Logout Button */}
+        <div className="mt-6">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors border border-red-200"
+          >
+            <LogOut className="w-5 h-5 mr-2" />
+            退出登录
+          </button>
+        </div>
       </div>
 
+      {/* Reset Dialog */}
       <Dialog open={resetDialogOpen} onClose={() => setResetDialogOpen(false)} title="确认清空">
         <div className="space-y-4">
           <div className="flex items-center space-x-2 text-amber-600 bg-amber-50 p-3 rounded-lg">
@@ -194,6 +284,124 @@ export const Settings: React.FC = () => {
               className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
             >
               确认清空
+            </button>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* Edit Profile Dialog */}
+      <Dialog open={editProfileOpen} onClose={() => setEditProfileOpen(false)} title="编辑个人资料">
+        <div className="space-y-4">
+          {/* Avatar Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">头像</label>
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-3xl overflow-hidden">
+                {isCustomAvatar ? (
+                  <img src={profile.avatar} alt="avatar" className="w-full h-full object-cover" />
+                ) : (
+                  profile.avatar || '👤'
+                )}
+              </div>
+              <div className="flex-1">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                >
+                  上传照片
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
+              </div>
+            </div>
+            {/* Emoji Options */}
+            <div className="mt-3">
+              <p className="text-xs text-gray-500 mb-2">或选择表情</p>
+              <div className="flex flex-wrap gap-2">
+                {DEFAULT_AVATARS.map((emoji) => (
+                  <button
+                    key={emoji}
+                    onClick={() => handleAvatarSelect(emoji)}
+                    className={cn(
+                      'w-10 h-10 rounded-lg text-xl flex items-center justify-center transition-all',
+                      profile.avatar === emoji
+                        ? 'bg-blue-100 ring-2 ring-blue-500'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    )}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Username */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">用户名</label>
+            <input
+              type="text"
+              value={editForm.username}
+              onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="请输入用户名"
+            />
+          </div>
+
+          {/* Bio */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">个人简介</label>
+            <input
+              type="text"
+              value={editForm.bio}
+              onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="介绍一下自己"
+            />
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">手机号</label>
+            <input
+              type="tel"
+              value={editForm.phone}
+              onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="请输入手机号"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">邮箱</label>
+            <input
+              type="email"
+              value={editForm.email}
+              onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="请输入邮箱"
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex space-x-3 pt-2">
+            <button
+              onClick={() => setEditProfileOpen(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            >
+              取消
+            </button>
+            <button
+              onClick={handleSaveProfile}
+              className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            >
+              保存
             </button>
           </div>
         </div>

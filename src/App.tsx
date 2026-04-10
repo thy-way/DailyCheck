@@ -1,21 +1,43 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuthStore } from '@/store/authStore';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
-import { Calendar } from './pages/Calendar';
 import { Stats } from './pages/Stats';
 import { Settings } from './pages/Settings';
 import { Quadrants } from './pages/Quadrants';
 import { Tomato } from './pages/Tomato';
+import { Plan } from './pages/Plan';
+import { Login } from './pages/Login';
+
+// Protected Route wrapper
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
+};
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/login" element={<Login />} />
+        
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Home />} />
+          <Route path="plan" element={<Plan />} />
           <Route path="quadrants" element={<Quadrants />} />
           <Route path="tomato" element={<Tomato />} />
-          <Route path="calendar" element={<Calendar />} />
           <Route path="stats" element={<Stats />} />
           <Route path="settings" element={<Settings />} />
         </Route>

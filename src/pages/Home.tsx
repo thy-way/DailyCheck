@@ -57,7 +57,7 @@ import {
   Languages,
 } from 'lucide-react';
 import { useCheckInStore } from '@/store';
-import { Category, Task, CheckIn } from '@/types';
+import { Category, Task, CheckIn, QuadrantType } from '@/types';
 import { CATEGORY_STYLES, cn } from '@/utils';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -97,6 +97,14 @@ const iconMap: Record<string, React.ElementType> = {
   Award,
   Languages,
 };
+
+// 四象限定义
+const QUADRANTS = [
+  { id: 'urgent-important' as QuadrantType, title: '重要紧急', desc: '立即处理', color: 'from-red-500 to-rose-600', bg: 'bg-red-50', border: 'border-red-200', icon: '🔥' },
+  { id: 'urgent-not-important' as QuadrantType, title: '紧急不重要', desc: '尽快处理', color: 'from-yellow-500 to-amber-600', bg: 'bg-yellow-50', border: 'border-yellow-200', icon: '⚡' },
+  { id: 'not-urgent-important' as QuadrantType, title: '重要不紧急', desc: '规划安排', color: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50', border: 'border-blue-200', icon: '🎯' },
+  { id: 'not-urgent-not-important' as QuadrantType, title: '不重要不紧急', desc: '减少或删除', color: 'from-gray-500 to-slate-600', bg: 'bg-gray-50', border: 'border-gray-200', icon: '🗑️' },
+];
 
 interface TaskDetailDialogProps {
   task: Task | null;
@@ -626,7 +634,10 @@ const CategorySection: React.FC<CategorySectionProps> = ({
               return (
                 <div
                   key={task.id}
-                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all"
+                  className={cn(
+                    'bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all',
+                    task.quadrant ? 'ring-2 ring-blue-300' : ''
+                  )}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
@@ -704,7 +715,10 @@ const CategorySection: React.FC<CategorySectionProps> = ({
             return (
               <div
                 key={task.id}
-                className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all"
+                className={cn(
+                  'bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all',
+                  task.quadrant ? 'ring-2 ring-blue-300' : ''
+                )}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
@@ -775,12 +789,13 @@ const CategorySection: React.FC<CategorySectionProps> = ({
 };
 
 export const Home: React.FC = () => {
-  const { todayCheckIns, categories, tasks, streak, addCheckIn, removeCheckIn } = useCheckInStore();
+  const { todayCheckIns, categories, tasks, streak, addCheckIn, removeCheckIn, updateTaskQuadrant } = useCheckInStore();
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [detailTask, setDetailTask] = useState<Task | null>(null);
   const [dailyQuote, setDailyQuote] = useState(ENCOURAGING_MESSAGES[Math.floor(Math.random() * ENCOURAGING_MESSAGES.length)]);
+  const [draggedTask, setDraggedTask] = useState<Task | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -809,6 +824,22 @@ export const Home: React.FC = () => {
       ...prev,
       [categoryId]: !prev[categoryId],
     }));
+  };
+
+  // Drag handlers for quadrant
+  const handleDragStart = (task: Task) => {
+    setDraggedTask(task);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (quadrantId: QuadrantType) => {
+    if (draggedTask) {
+      await updateTaskQuadrant(draggedTask.id, quadrantId);
+      setDraggedTask(null);
+    }
   };
 
   const enabledCategories = categories.filter((c) => c.enabled);
@@ -866,7 +897,7 @@ export const Home: React.FC = () => {
               <div
                 className="h-full rounded-full bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 transition-all duration-700 shadow-lg"
                 style={{ width: `${totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0}%` }}
-/>
+              />
             </div>
             <div className="flex justify-between mt-1.5 text-xs text-blue-300">
               <span>已完成 {Math.round(totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0)}%</span>
@@ -879,6 +910,54 @@ export const Home: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* 四象限法则区域 */}
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          {QUADRANTS.map((quadrant) => {
+            const quadrantTasks = tasks.filter(t => t.quadrant === quadrant.id);
+            return (
+              <div
+                key={quadrant.id}
+                onDragOver={handleDragOver}
+                onDrop={() => handleDrop(quadrant.id)}
+                className={cn(
+                  'rounded-xl p-3 sm:p-4 border-2 transition-all min-h-[100px]',
+                  quadrant.bg,
+                  quadrant.border,
+                  draggedTask ? 'ring-2 ring-blue-400 ring-opacity-50' : ''
+                )}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center">
+                    <span className="text-lg mr-2">{quadrant.icon}</span>
+                    <span className="font-semibold text-sm sm:text-base text-gray-800">{quadrant.title}</span>
+                  </div>
+                  <span className="text-xs text-gray-500">{quadrantTasks.length}</span>
+                </div>
+                <p className="text-xs text-gray-500 mb-2">{quadrant.desc}</p>
+                <div className="space-y-1 max-h-[80px] overflow-y-auto">
+                  {quadrantTasks.map((task) => (
+                    <div
+                      key={task.id}
+                      draggable
+                      onDragStart={() => handleDragStart(task)}
+                      className="flex items-center justify-between bg-white rounded-lg px-2 py-1 text-xs shadow-sm border border-gray-100 cursor-move"
+                    >
+                      <span className="truncate">{task.name}</span>
+                    </div>
+                  ))}
+                  {quadrantTasks.length === 0 && (
+                    <div className="text-center text-gray-300 text-xs py-2">
+                      拖拽任务到此处
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
       <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
         {enabledCategories.map((category) => {
